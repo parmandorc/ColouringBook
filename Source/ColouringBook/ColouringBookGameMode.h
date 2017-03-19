@@ -12,6 +12,12 @@ class AColouringBookGameMode : public AGameModeBase
 
 public:
 	AColouringBookGameMode();
+
+	virtual void StartPlay();
+
+protected:
+
+	void CreatePlayers(int numPlayers);
 };
 
 
