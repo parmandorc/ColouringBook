@@ -10,6 +10,14 @@ AColouringBookGameMode::AColouringBookGameMode()
 	DefaultPawnClass = AColouringBookPawn::StaticClass();
 }
 
+void AColouringBookGameMode::InitGameState()
+{
+	AGameModeBase::InitGameState();
+
+	//  Get all PlayerStart
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), playerStarts);
+}
+
 void AColouringBookGameMode::StartPlay()
 {
 	int numPlayers = 4; // FIXME: This number should problably come from UI, unless we are using a players pop in/out feature
@@ -33,13 +41,25 @@ void AColouringBookGameMode::CreatePlayers(int numPlayers)
 		UGameplayStatics::CreatePlayer(GetWorld(), playerIndex);
 		playerIndex++;
 	}
+}
 
-	APlayerController* controller = GetWorld()->GetFirstPlayerController();
+AActor* AColouringBookGameMode::ChoosePlayerStart_Implementation(AController* Player)
+{
+	// Apparently there is no direct relationship between Player and ControllerId
+	// and PlayerStart and ControllerId at this point?
+	// Therefore, PlayerStart is choose by name(not ideal if the name changes in the editor...) according to the number of players created so far
+	int32 numPlayers = GetWorld()->GetGameInstance()->GetNumLocalPlayers();
+	FString playerName = "PlayerStart";
+	playerName.AppendInt(numPlayers);
+	
+	for (AActor* actor : playerStarts)
+	{
+		if (actor->GetName() == playerName)
+		{
+			return actor;
+		}
+	}
 
-	// print debug message
-	FString debugMessage;
-	debugMessage.AppendInt(GetNumPlayers());
-	debugMessage.Append(" Players created");
-	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.0f, FColor::Green, debugMessage);
+	return nullptr;
 }
 

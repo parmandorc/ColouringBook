@@ -15,9 +15,16 @@ public:
 
 	virtual void StartPlay();
 
+	virtual void InitGameState();
+	virtual bool ShouldSpawnAtStartSpot(AController* Player) { return false; }
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player);
+	
+
 protected:
 
 	void CreatePlayers(int numPlayers);
+
+	TArray<AActor*> playerStarts;
 };
 
 
