@@ -38,7 +38,7 @@ void AColouringBookGameMode::CreatePlayers(int numPlayers)
 
 	while (playerIndex < numPlayers && playerIndex < MAX_PLAYERS)
 	{
-		UGameplayStatics::CreatePlayer(GetWorld(), playerIndex);
+		UGameplayStatics::CreatePlayer(GetWorld());
 		playerIndex++;
 	}
 }
