@@ -28,21 +28,17 @@ void AColouringBookGameMode::CreatePlayers(int numPlayers)
 	// TO-DO: Investigate if we are able to control first player creation at this point
 	int32 playerIndex = GetWorld()->GetGameInstance()->GetNumLocalPlayers();
 
-	int numPlayersCreated = playerIndex;
-
 	while (playerIndex < numPlayers && playerIndex < MAX_PLAYERS)
 	{
-		if (UGameplayStatics::CreatePlayer(GetWorld()))
-		{
-			numPlayersCreated++;
-		}
-
+		UGameplayStatics::CreatePlayer(GetWorld(), playerIndex);
 		playerIndex++;
 	}
 
+	APlayerController* controller = GetWorld()->GetFirstPlayerController();
+
 	// print debug message
 	FString debugMessage;
-	debugMessage.AppendInt(numPlayersCreated);
+	debugMessage.AppendInt(GetNumPlayers());
 	debugMessage.Append(" Players created");
 	GEngine->AddOnScreenDebugMessage(INDEX_NONE, 5.0f, FColor::Green, debugMessage);
 }
