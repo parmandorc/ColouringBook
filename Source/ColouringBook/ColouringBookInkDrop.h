@@ -1,40 +1,33 @@
-// Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 #pragma once
 
 #include "GameFramework/Actor.h"
-#include "ColouringBookProjectile.generated.h"
+#include "ColouringBookInkDrop.generated.h"
 
 class UProjectileMovementComponent;
 class UStaticMeshComponent;
 
-UCLASS(config=Game)
-class AColouringBookProjectile : public AActor
+UCLASS(config = Game)
+class AColouringBookInkDrop : public AActor
 {
 	GENERATED_BODY()
 
 	/** Sphere collision component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Projectile, meta = (AllowPrivateAccess = "true"))
-	UStaticMeshComponent* ProjectileMesh;
+	UStaticMeshComponent* InkDropMesh;
 
 	/** Projectile movement component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
 public:
-	AColouringBookProjectile();
+	AColouringBookInkDrop();
 
 	/** Function to handle the projectile hitting something */
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-private:
-	/* Spawns the ink drops from this bullet */
-	void SpawnInkDrops();
-
-public:
-	/** Returns ProjectileMesh subobject **/
-	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return ProjectileMesh; }
+	/** Returns InkDropMesh subobject **/
+	FORCEINLINE UStaticMeshComponent* GetInkDropMesh() const { return InkDropMesh; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 };
-

@@ -2,6 +2,7 @@
 
 #include "ColouringBook.h"
 #include "ColouringBookProjectile.h"
+#include "ColouringBookInkDrop.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AColouringBookProjectile::AColouringBookProjectile() 
@@ -36,7 +37,22 @@ void AColouringBookProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* Other
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
+
+		SpawnInkDrops();
 	}
 
 	Destroy();
+}
+
+void AColouringBookProjectile::SpawnInkDrops()
+{
+	const FRotator FireRotation = GetActorRotation();
+	const FVector SpawnLocation = GetActorLocation();// + FireRotation.RotateVector(GunOffset);
+
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		// spawn the projectile
+		World->SpawnActor<AColouringBookInkDrop>(SpawnLocation, FireRotation);
+	}
 }
