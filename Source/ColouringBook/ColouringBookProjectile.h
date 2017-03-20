@@ -20,6 +20,14 @@ class AColouringBookProjectile : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
+	/* The amount of ink drops to be spawned from the bullet */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = InkDrops, meta = (AllowPrivateAccess = "true"))
+	int InkDropsSpawnAmount;
+
+	/* The amount of ink drops to be spawned from the bullet */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = InkDrops, meta = (AllowPrivateAccess = "true"))
+	float InkDropsSpawnAngleVariance;
+
 public:
 	AColouringBookProjectile();
 
