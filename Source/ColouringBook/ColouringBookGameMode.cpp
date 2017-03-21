@@ -2,11 +2,15 @@
 
 #include "ColouringBook.h"
 #include "ColouringBookGameMode.h"
-#include "ColouringBookPawn.h"
+#include "ColouringBookCharacter.h"
 
 AColouringBookGameMode::AColouringBookGameMode()
 {
-	// set default pawn class to our character class
-	DefaultPawnClass = AColouringBookPawn::StaticClass();
+	// set default pawn class to our Blueprinted character
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Blueprints/ColouringBookCharacter"));
+	if (PlayerPawnBPClass.Class != NULL)
+	{
+		DefaultPawnClass = PlayerPawnBPClass.Class;
+	}
 }
 
