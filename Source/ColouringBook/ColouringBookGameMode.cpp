@@ -20,7 +20,7 @@ void AColouringBookGameMode::InitGameState()
 
 void AColouringBookGameMode::StartPlay()
 {
-	int numPlayers = 4; // FIXME: This number should problably come from UI, unless we are using a players pop in/out feature
+	int numPlayers = 2; // FIXME: This number should problably come from UI, unless we are using a players pop in/out feature
 	CreatePlayers(numPlayers);
 
 	AGameModeBase::StartPlay();

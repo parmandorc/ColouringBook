@@ -8,7 +8,7 @@
 //
 // Place any includes here that are needed by the majority of your .cpp files
 
-#include "Engine.h"
+#include "EngineMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogColouringBook, Log, All);
 
