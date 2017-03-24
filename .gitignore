@@ -73,3 +73,6 @@ Intermediate/*
 DerivedDataCache/*
 
 # End of https://www.gitignore.io/api/unrealengine
+
+# temporary folders
+enc_temp_folder/*
