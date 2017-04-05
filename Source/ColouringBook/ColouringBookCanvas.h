@@ -21,6 +21,10 @@ public:
 	virtual void PostInitializeComponents() override;
 	// End Actor Interface
 
+	// Function to handle the canvas being hit by something
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 private:
 	// The array of dynamic materials
 	TArray<class UMaterialInstanceDynamic*> dynamicMaterials;
@@ -34,6 +38,4 @@ private:
 
 	// The color matrix that is being painted on the canvas texture
 	uint8* dynamicColors;
-
-
 };

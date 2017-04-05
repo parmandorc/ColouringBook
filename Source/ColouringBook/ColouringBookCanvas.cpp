@@ -63,7 +63,8 @@ void UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions
 
 AColouringBookCanvas::AColouringBookCanvas()
 {
-
+	// Set callback for when canvas is hit by something
+	GetStaticMeshComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCanvas::OnHit);
 }
 
 void AColouringBookCanvas::Tick(float DeltaSeconds)
@@ -91,27 +92,15 @@ void AColouringBookCanvas::PostInitializeComponents()
 	// Initalize our dynamic pixel array with data size
 	dynamicColors = new uint8[w * h * 4]; // * 4 because each color is made out of 4 uint8
 
-	// Initialize colors
-	for (int i = 0; i < h; i++)
+	// Initialize texture colors to white
+	for (int j = 0; j < h; j++)
 	{
-		for (int j = 0; j < w; j++) 
+		for (int i = 0; i < w; i++) 
 		{
-			int pixelIndex = (i * w + j) * 4;
-
-			if ((i - h * 0.5f) * (i - h * 0.5f) + (j - w * 0.5f) * (j - w * 0.5f) < 1000)
-			{
-				// draw blue circle in the middle
-				dynamicColors[pixelIndex + 0] = 255; // blue
-				dynamicColors[pixelIndex + 2] = 0;
-			}
-			else
-			{
-				// black & red checkered background
-				dynamicColors[pixelIndex + 0] = 0; // blue
-				dynamicColors[pixelIndex + 2] = (i % 40 < 20) == (j % 40 < 20) ? 0 : 255; // red
-			}
-
-			dynamicColors[pixelIndex + 1] = 0; // green
+			int pixelIndex = (i + j * w) * 4;
+			dynamicColors[pixelIndex + 0] = 255; // blue
+			dynamicColors[pixelIndex + 1] = 255; // green
+			dynamicColors[pixelIndex + 2] = 255; // red
 			dynamicColors[pixelIndex + 3] = 255; // alpha
 		}
 	}
@@ -122,4 +111,30 @@ void AColouringBookCanvas::PostInitializeComponents()
 	// Update texture and assign it to material
 	UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(w * 4), (uint32)4, dynamicColors, false);
 	dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
+}
+
+void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if ((OtherActor != NULL) && (OtherActor != this))
+	{
+		// Get the relative coordinates of the collision inside the canvas
+		// Note: this only works when the canvas is horizontal, symetrical in its two axis, and centered in the origin.
+		// If this conditions change by design, further calculations need to be performed to obtain these coordinates.
+		FBox bb = GetComponentsBoundingBox();
+		float dx = (Hit.ImpactPoint.X - bb.Min.X) / (bb.Max.X - bb.Min.X);
+		float dy = (Hit.ImpactPoint.Y - bb.Min.Y) / (bb.Max.Y - bb.Min.Y);
+
+		// Get texture coordinates
+		int i = dx * 209;
+		int j = dy * 296;
+
+		// Update pixel color
+		int pixelIndex = (i + j * 210) * 4;
+		dynamicColors[pixelIndex + 0] = 0; // blue
+		dynamicColors[pixelIndex + 1] = 0; // green
+
+		// Update texture and assign it to material
+		UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(210 * 4), (uint32)4, dynamicColors, false);
+		dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
+	}
 }
