@@ -15,6 +15,14 @@ ADirector::ADirector()
 void ADirector::BeginPlay()
 {
 	Super::BeginPlay();
+
+	//Handle spawning of enemies
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		World->SpawnActor<ACharacter>(EnemyBP, GetActorLocation(), GetActorRotation());
+	}
+
 }
 
 // Called every frame
@@ -22,12 +30,7 @@ void ADirector::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//Handle spawning of enemies
-	/* UWorld* const World = GetWorld();
-	if (World != NULL)
-	{
-		World->SpawnActor<ACharacter>(EnemyBP, GetActorLocation(), GetActorRotation());
-	}
-	*/
+	//TODO modify spawn every second or so, modify location spawn in circle random position
+
 }
 
