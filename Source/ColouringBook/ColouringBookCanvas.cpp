@@ -124,14 +124,27 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		float dx = (Hit.ImpactPoint.X - bb.Min.X) / (bb.Max.X - bb.Min.X);
 		float dy = (Hit.ImpactPoint.Y - bb.Min.Y) / (bb.Max.Y - bb.Min.Y);
 
-		// Get texture coordinates
-		int i = dx * 209;
-		int j = dy * 296;
+		// Get texture coordinates of the centre of the circle and its radius
+		int ci = dx * 209;
+		int cj = dy * 296;
+		int r = 2;
 
-		// Update pixel color
-		int pixelIndex = (i + j * 210) * 4;
-		dynamicColors[pixelIndex + 0] = 0; // blue
-		dynamicColors[pixelIndex + 1] = 0; // green
+		// Paint the pixels of the circle
+		for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, 296); j++)
+		{
+			for (int i = FMath::Max<int>(ci - r, 0); i <= FMath::Min<int>(ci + r, 209); i++)
+			{
+				int di = FMath::Abs<int>(ci - i);
+				int dj = FMath::Abs<int>(cj - j);
+				if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
+				{
+					// Update pixel color
+					int pixelIndex = (i + j * 210) * 4;
+					dynamicColors[pixelIndex + 0] = 0; // blue
+					dynamicColors[pixelIndex + 1] = 0; // green
+				}
+			}
+		}
 
 		// Update texture and assign it to material
 		UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(210 * 4), (uint32)4, dynamicColors, false);
