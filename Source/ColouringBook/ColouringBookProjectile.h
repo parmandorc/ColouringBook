@@ -20,6 +20,14 @@ class AColouringBookProjectile : public AActor
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Movement, meta = (AllowPrivateAccess = "true"))
 	UProjectileMovementComponent* ProjectileMovement;
 
+	/* The amount of ink drops to be spawned from the bullet */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = InkDrops, meta = (AllowPrivateAccess = "true"))
+	int InkDropsSpawnAmount;
+
+	/* The amount of ink drops to be spawned from the bullet */
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = InkDrops, meta = (AllowPrivateAccess = "true"))
+	float InkDropsSpawnAngleVariance;
+
 public:
 	AColouringBookProjectile();
 
@@ -27,6 +35,11 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
+private:
+	/* Spawns the ink drops from this bullet */
+	void SpawnInkDrops();
+
+public:
 	/** Returns ProjectileMesh subobject **/
 	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return ProjectileMesh; }
 	/** Returns ProjectileMovement subobject **/
