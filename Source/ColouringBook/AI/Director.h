@@ -18,6 +18,8 @@ public:
 	// Sets default values for this actor's properties
 	ADirector();
 	FTimerHandle TimerHandle;
+	int32 EnemiesSpawned = 0;
+	bool EnemyLimitReached = false;
 
 protected:
 	// Called when the game starts or when spawned

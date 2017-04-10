@@ -9,8 +9,6 @@ ADirector::ADirector()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-
-
 }
 
 // Called when the game starts or when spawned
@@ -46,22 +44,30 @@ FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
 
 }
 
-//TODO limit number of enemies spawned
+//TODO make enemies not spawn near player
+
 //Called every x seconds with FTimerManager::SetTimer()
 void ADirector::SpawnPuppets()
 {
 	//Handle spawning of enemies
 	UWorld* const World = GetWorld();
 
-	
 	FVector center(0.0f, 0.0f, 250.0f);
 	float radius = 1200.0f;
 	FVector PuppetLocation = GetRandomCirclePosition(center, radius);
 
-	
-	if (World != NULL)
+	if (World != NULL && !EnemyLimitReached)
 	{
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADirector::SpawnPuppets, 1.5f, true);
+
+		EnemiesSpawned++;
+
+		//setting limit to spawn enemies. TODO change later or rewrite
+		if (EnemiesSpawned > 15) 
+		{
+			GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+		}
+		
 		//ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, GetActorLocation(), GetActorRotation());
 
 		ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, PuppetLocation, GetActorRotation());
