@@ -29,65 +29,50 @@ void ADirector::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
+{
 	
+	float angle = FMath::RandRange(0.0f, 270.0f);
 
-	////Handle spawning of enemies
-	//UWorld* const World = GetWorld();
+	FVector position;
 
+	position.X = center.X + radius*FMath::Sin(angle*FMath::DegreesToRadians(angle));
+	position.Y = center.Y + radius*FMath::Cos(angle*FMath::DegreesToRadians(angle));
+	position.Z = center.Z;
 
-	////TODO modify spawn every second or so, modify location spawn in circle random position
-	//FVector PuppetLocation = FVector(850.0f, 1000.0f, 250.0f);
-
-
-	//if (World != NULL)
-	//{
-
-	//	//ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, GetActorLocation(), GetActorRotation());
-
-	//	ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, PuppetLocation, GetActorRotation());
-
-
-	//	FString PuppetPosition = *SpawnedPuppet->GetTransform().GetLocation().ToString();
-
-	//	UE_LOG(LogTemp, Warning, TEXT("Puppet is at %s"), *PuppetPosition);
-
-	//}
-
+	return position;
 
 }
 
-
+//TODO limit number of enemies spawned
+//Called every x seconds with FTimerManager::SetTimer()
 void ADirector::SpawnPuppets()
 {
 	//Handle spawning of enemies
 	UWorld* const World = GetWorld();
 
+	
+	FVector center(0.0f, 0.0f, 250.0f);
+	float radius = 1200.0f;
+	FVector PuppetLocation = GetRandomCirclePosition(center, radius);
 
-	//TODO modify spawn every second or so, modify location spawn in circle random position
-	FVector PuppetLocation = FVector(850.0f, 1000.0f, 250.0f);
-
-
+	
 	if (World != NULL)
 	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADirector::SpawnPuppets, 3.0f, true);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADirector::SpawnPuppets, 1.5f, true);
 		//ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, GetActorLocation(), GetActorRotation());
 
 		ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, PuppetLocation, GetActorRotation());
-
-
+		
+		//Debug
 		FString PuppetPosition = *SpawnedPuppet->GetTransform().GetLocation().ToString();
-
 		UE_LOG(LogTemp, Warning, TEXT("Puppet is at %s"), *PuppetPosition);
 
 	}
 }
 
-
-void ADirector::CustomSpawningTimer()
-{
-	
-	//GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADirector::SpawnPuppets, 5.0f, true);
-}
 
 
 

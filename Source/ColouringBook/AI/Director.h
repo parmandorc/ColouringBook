@@ -28,11 +28,12 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
+	
+	//helper to generate random position for enemies to spawn
+	FVector GetRandomCirclePosition(FVector center, float radius);
+	
+	//allows custom timing for spawning enemies
 	void SpawnPuppets();
-
-
-	void CustomSpawningTimer(); //function to allow spawning at desired frequency
 
 	
 };
