@@ -46,6 +46,9 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
+	void LocalFireShot(FVector FireDirection);
+	void OnlineFireShot(FVector FireDirection);
+
 private:
 
 	/* Flag to control firing  */

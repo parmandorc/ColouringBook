@@ -11,6 +11,9 @@ const FName AColouringBookCharacter::FireRightBinding("FireRight");
 
 AColouringBookCharacter::AColouringBookCharacter()
 {	
+	// Make sure that this character replicates
+	bReplicates = true;
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 
@@ -81,6 +84,19 @@ void AColouringBookCharacter::Tick(float DeltaSeconds)
 
 void AColouringBookCharacter::FireShot(FVector FireDirection)
 {
+	AColouringBookGameMode* gameMode = static_cast<AColouringBookGameMode*> (GetWorld()->GetAuthGameMode());
+	if (gameMode && gameMode->GetMultiplayerMode() == AColouringBookGameMode::MultiplayerMode::LOCAL)
+	{
+		LocalFireShot(FireDirection);
+	}
+	else
+	{
+		OnlineFireShot(FireDirection);
+	}
+}
+
+void AColouringBookCharacter::LocalFireShot(FVector FireDirection)
+{
 	// If we it's ok to fire again
 	if (bCanFire == true)
 	{
@@ -110,6 +126,19 @@ void AColouringBookCharacter::FireShot(FVector FireDirection)
 			bCanFire = false;
 		}
 	}
+}
+
+void AColouringBookCharacter::OnlineFireShot(FVector FireDirection)
+{
+	if (Role != ROLE_AutonomousProxy)
+	{
+		// only allow owning client to perform this action
+		return;
+	}
+
+	// For the time being use LocalFireShot
+	// TO-DO: Proper client-server FireShot
+	LocalFireShot(FireDirection);
 }
 
 void AColouringBookCharacter::ShotTimerExpired()
