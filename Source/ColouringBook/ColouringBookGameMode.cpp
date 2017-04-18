@@ -5,6 +5,7 @@
 #include "ColouringBookCharacter.h"
 
 AColouringBookGameMode::AColouringBookGameMode()
+	: multiplayerMode(MultiplayerMode::UNDEFINED)
 {
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Blueprints/ColouringBookCharacter"));
@@ -24,13 +25,35 @@ void AColouringBookGameMode::InitGameState()
 
 void AColouringBookGameMode::StartPlay()
 {
-	int numPlayers = 2; // FIXME: This number should problably come from UI, unless we are using a players pop in/out feature
-	CreatePlayers(numPlayers);
+	multiplayerMode = MultiplayerMode::ONLINE; // FIXME: This should probably come from UI
+
+	switch (multiplayerMode)
+	{
+	case MultiplayerMode::LOCAL:
+		StartLocalMultiplayerPlay();
+		break;
+	case MultiplayerMode::ONLINE:
+		StartOnlineMultiplayerPlay();
+		break;
+	default:
+		break;
+	}
 
 	AGameModeBase::StartPlay();
 }
 
-void AColouringBookGameMode::CreatePlayers(int numPlayers)
+void AColouringBookGameMode::StartOnlineMultiplayerPlay()
+{
+	// TO-DO
+}
+
+void AColouringBookGameMode::StartLocalMultiplayerPlay()
+{
+	int numPlayers = 2; // FIXME: This number should problably come from UI, unless we are using a players pop in/out feature
+	LocalMultiplayerCreatePlayers(numPlayers);
+}
+
+void AColouringBookGameMode::LocalMultiplayerCreatePlayers(int numPlayers)
 {
 	// TO-DO: Investigate how to surpass MaxSplitscreenPlayers constraint because it is the one that doesn´t allow to create 
 	// more than 4 players (regardless of using split screen or not)

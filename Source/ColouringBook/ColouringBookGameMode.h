@@ -19,12 +19,30 @@ public:
 	virtual bool ShouldSpawnAtStartSpot(AController* Player) { return false; }
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player);
 	
+	enum class MultiplayerMode
+	{
+		UNDEFINED,
+
+		LOCAL,
+		ONLINE,
+
+		NUM_MULTIPLAYER_MODES
+	};
+
+	MultiplayerMode GetMultiplayerMode() { return multiplayerMode; }
 
 protected:
 
-	void CreatePlayers(int numPlayers);
+	void StartLocalMultiplayerPlay();
+	void StartOnlineMultiplayerPlay();
+
+	void LocalMultiplayerCreatePlayers(int numPlayers);
+
+private:
 
 	TArray<AActor*> playerStarts;
+
+	MultiplayerMode multiplayerMode;
 };
 
 
