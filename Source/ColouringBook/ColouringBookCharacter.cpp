@@ -3,6 +3,7 @@
 #include "ColouringBook.h"
 #include "ColouringBookCharacter.h"
 #include "ColouringBookProjectile.h"
+#include "ColouringBookGameMode.h"
 #include "TimerManager.h"
 
 const FName AColouringBookCharacter::FireForwardBinding("FireForward");
@@ -37,21 +38,25 @@ void AColouringBookCharacter::SetupPlayerInputComponent(class UInputComponent* P
 {
 	check(PlayerInputComponent);
 
-	// AutoPossessPlayer and AutoReceiveInput to the correct player according to the ControllerId
-	int32 controllerId = GetNetOwningPlayer()->GetPlayerController(GetWorld())->GetLocalPlayer()->GetControllerId();
-	switch (controllerId)
+	AColouringBookGameMode* gameMode = static_cast<AColouringBookGameMode*> (GetWorld()->GetAuthGameMode());
+	if (gameMode && gameMode->GetMultiplayerMode() == AColouringBookGameMode::MultiplayerMode::LOCAL)
 	{
-	case 0: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player0; break;
-	case 1: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player1; break;
-	case 2: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player2; break;
-	case 3: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player3; break;
-	case 4: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player4; break;
-	case 5: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player5; break;
-	case 6: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player6; break;
-	case 7: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player7; break;
-	default: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Disabled; break;
+		// AutoPossessPlayer and AutoReceiveInput to the correct player according to the ControllerId
+		int32 controllerId = GetNetOwningPlayer()->GetPlayerController(GetWorld())->GetLocalPlayer()->GetControllerId();
+		switch (controllerId)
+		{
+		case 0: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player0; break;
+		case 1: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player1; break;
+		case 2: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player2; break;
+		case 3: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player3; break;
+		case 4: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player4; break;
+		case 5: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player5; break;
+		case 6: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player6; break;
+		case 7: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Player7; break;
+		default: AutoPossessPlayer = AutoReceiveInput = EAutoReceiveInput::Disabled; break;
+		}
 	}
-
+	
 	// set up gameplay key bindings
 	PlayerInputComponent->BindAxis(FireForwardBinding);
 	PlayerInputComponent->BindAxis(FireRightBinding);
