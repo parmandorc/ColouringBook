@@ -38,4 +38,7 @@ private:
 
 	// The color matrix that is being painted on the canvas texture
 	uint8* dynamicColors;
+	
+	// The size of the texture. Derived from the CanvasResolution and the shape of the canvas mesh
+	int32 canvasTextureWidth, canvasTextureHeight;
 };

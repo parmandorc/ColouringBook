@@ -63,6 +63,10 @@ void UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions
 
 AColouringBookCanvas::AColouringBookCanvas()
 {
+	// Set canvas texture size
+	canvasTextureWidth = 297;
+	canvasTextureHeight = 210;
+
 	// Set callback for when canvas is hit by something
 	GetStaticMeshComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCanvas::OnHit);
 }
@@ -76,28 +80,25 @@ void AColouringBookCanvas::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	//Convert the static material in our mesh into a dynamic one, and store it (please note that if you have more than one material that you wish to mark dynamic, do so here).
+	// Convert the static material in our mesh into a dynamic one, and store it (please note that if you have more than one material that you wish to mark dynamic, do so here).
 	dynamicMaterials.Add(GetStaticMeshComponent()->CreateAndSetMaterialInstanceDynamic(0));
 
-	//Create a dynamic texture with the default compression (B8G8R8A8)
-	int32 w, h;
-	w = 210;
-	h = 297;
-	dynamicTexture = UTexture2D::CreateTransient(w, h);
+	// Create a dynamic texture with the default compression (B8G8R8A8)
+	dynamicTexture = UTexture2D::CreateTransient(canvasTextureWidth, canvasTextureHeight);
 	dynamicTexture->CompressionSettings = TextureCompressionSettings::TC_VectorDisplacementmap; //Make sure it won't be compressed
 	dynamicTexture->SRGB = 0; //Turn off Gamma-correction
 	dynamicTexture->AddToRoot(); //Guarantee no garbage collection by adding it as a root reference
 	dynamicTexture->UpdateResource(); //Update the texture with new variable values.
 
 	// Initalize our dynamic pixel array with data size
-	dynamicColors = new uint8[w * h * 4]; // * 4 because each color is made out of 4 uint8
+	dynamicColors = new uint8[canvasTextureWidth * canvasTextureHeight * 4]; // * 4 because each color is made out of 4 uint8
 
 	// Initialize texture colors to white
-	for (int j = 0; j < h; j++)
+	for (int j = 0; j < canvasTextureHeight; j++)
 	{
-		for (int i = 0; i < w; i++) 
+		for (int i = 0; i < canvasTextureWidth; i++)
 		{
-			int pixelIndex = (i + j * w) * 4;
+			int pixelIndex = (i + j * canvasTextureWidth) * 4;
 			dynamicColors[pixelIndex + 0] = 255; // blue
 			dynamicColors[pixelIndex + 1] = 255; // green
 			dynamicColors[pixelIndex + 2] = 255; // red
@@ -106,10 +107,10 @@ void AColouringBookCanvas::PostInitializeComponents()
 	}
 
 	// Create a new texture region with the width and height of our dynamic texture
-	updateTextureRegion = new FUpdateTextureRegion2D(0, 0, 0, 0, w, h);
+	updateTextureRegion = new FUpdateTextureRegion2D(0, 0, 0, 0, canvasTextureWidth, canvasTextureHeight);
 
 	// Update texture and assign it to material
-	UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(w * 4), (uint32)4, dynamicColors, false);
+	UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
 	dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
 }
 
@@ -118,28 +119,26 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 	if ((OtherActor != NULL) && (OtherActor != this))
 	{
 		// Get the relative coordinates of the collision inside the canvas
-		// Note: this only works when the canvas is horizontal, symetrical in its two axis, and centered in the origin.
-		// If this conditions change by design, further calculations need to be performed to obtain these coordinates.
-		FBox bb = GetComponentsBoundingBox();
-		float dx = (Hit.ImpactPoint.X - bb.Min.X) / (bb.Max.X - bb.Min.X);
-		float dy = (Hit.ImpactPoint.Y - bb.Min.Y) / (bb.Max.Y - bb.Min.Y);
+		// Note: FTransform::InverseTransformPosition transforms the coordinates from world space to local space.
+		//		Local space is given in the range [-50, 50], and we need coordinates in [0, 1].
+		FVector localCoords = (GetTransform().InverseTransformPosition(Hit.ImpactPoint) + 50.0f) * 0.01f;
 
 		// Get texture coordinates of the centre of the circle and its radius
-		int ci = dx * 209;
-		int cj = dy * 296;
+		int ci = localCoords.X * (canvasTextureWidth - 1);
+		int cj = localCoords.Y * (canvasTextureHeight - 1);
 		int r = 2;
 
 		// Paint the pixels of the circle
-		for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, 296); j++)
+		for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, canvasTextureHeight - 1); j++)
 		{
-			for (int i = FMath::Max<int>(ci - r, 0); i <= FMath::Min<int>(ci + r, 209); i++)
+			for (int i = FMath::Max<int>(ci - r, 0); i <= FMath::Min<int>(ci + r, canvasTextureWidth - 1); i++)
 			{
 				int di = FMath::Abs<int>(ci - i);
 				int dj = FMath::Abs<int>(cj - j);
 				if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
 				{
 					// Update pixel color
-					int pixelIndex = (i + j * 210) * 4;
+					int pixelIndex = (i + j * canvasTextureWidth) * 4;
 					dynamicColors[pixelIndex + 0] = 0; // blue
 					dynamicColors[pixelIndex + 1] = 0; // green
 				}
@@ -147,7 +146,7 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		}
 
 		// Update texture and assign it to material
-		UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(210 * 4), (uint32)4, dynamicColors, false);
+		UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
 		dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
 	}
 }
