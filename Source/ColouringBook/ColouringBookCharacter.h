@@ -46,8 +46,8 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
-	bool LocalFireShot(FVector FireDirection);
-	bool OnlineFireShot(FVector FireDirection);
+	bool LocalFireShot(FVector fireLocation, FRotator fireRotator);
+	bool OnlineFireShot(FVector fireLocation, FRotator fireRotator);
 
 private:
 
@@ -59,11 +59,13 @@ private:
 
 	// FireShot done by the server
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerFireShot(FVector pos, FVector dir);
+	void ServerFireShot(FVector fireLocation, FRotator fireRotator);
 
 	// Called by the server to inform all the clients that a player fired
 	UFUNCTION(NetMulticast, unreliable)
 	void MulticastPlayerFired();
+
+	class AColouringBookProjectile* SpawnProjectile(FVector fireLocation, FRotator fireRotator);
 
 };
 

@@ -90,16 +90,21 @@ void AColouringBookCharacter::FireShot(FVector FireDirection)
 		// If we are pressing fire stick in a direction
 		if (FireDirection.SizeSquared() > 0.0f)
 		{
+			const FRotator FireRotation = FireDirection.Rotation();
+
+			// Spawn projectile at an offset from this pawn
+			const FVector SpawnLocation = GetActorLocation() + FireRotation.RotateVector(GunOffset);
+
 			bool fired = false;
 
 			AColouringBookGameMode* gameMode = static_cast<AColouringBookGameMode*> (GetWorld()->GetAuthGameMode());
 			if (gameMode && gameMode->GetMultiplayerMode() == AColouringBookGameMode::MultiplayerMode::LOCAL)
 			{
-				fired = LocalFireShot(FireDirection);
+				fired = LocalFireShot(SpawnLocation, FireRotation);
 			}
 			else
 			{
-				fired = OnlineFireShot(FireDirection);
+				fired = OnlineFireShot(SpawnLocation, FireRotation);
 			}
 
 			if (fired)
@@ -111,19 +116,10 @@ void AColouringBookCharacter::FireShot(FVector FireDirection)
 	}
 }
 
-bool AColouringBookCharacter::LocalFireShot(FVector FireDirection)
+bool AColouringBookCharacter::LocalFireShot(FVector fireLocation, FRotator fireRotator)
 {
-	const FRotator FireRotation = FireDirection.Rotation();
-
-	// Spawn projectile at an offset from this pawn
-	const FVector SpawnLocation = GetActorLocation() + FireRotation.RotateVector(GunOffset);
-
-	UWorld* const World = GetWorld();
-	if (World != NULL)
-	{
-		// spawn the projectile
-		World->SpawnActor<AColouringBookProjectile>(SpawnLocation, FireRotation);
-	}
+	// spawn projectile
+	SpawnProjectile(fireLocation, fireRotator);
 
 	// try and play the sound if specified
 	if (FireSound != nullptr)
@@ -134,7 +130,7 @@ bool AColouringBookCharacter::LocalFireShot(FVector FireDirection)
 	return true;
 }
 
-bool AColouringBookCharacter::OnlineFireShot(FVector fireDirection)
+bool AColouringBookCharacter::OnlineFireShot(FVector fireLocation, FRotator fireRotator)
 {
 	if (Role == ROLE_SimulatedProxy)
 	{
@@ -145,17 +141,16 @@ bool AColouringBookCharacter::OnlineFireShot(FVector fireDirection)
 	// TO-DO: Add here any visual firing effect if needed
 
 	// Notify the server
-	FVector firePosition = GetActorLocation();
-	ServerFireShot(firePosition, fireDirection);
+	ServerFireShot(fireLocation, fireRotator);
 
 	return true;
 }
 
-bool AColouringBookCharacter::ServerFireShot_Validate(FVector pos, FVector dir)
+bool AColouringBookCharacter::ServerFireShot_Validate(FVector fireLocation, FRotator fireRotator)
 {	
 	// TO-DO: proper validation, anti-cheating measures, etc.
 
-	if (dir.IsZero())
+	if (fireRotator.IsZero())
 	{
 		return false;
 	}
@@ -163,9 +158,10 @@ bool AColouringBookCharacter::ServerFireShot_Validate(FVector pos, FVector dir)
 	return true;
 }
 
-void AColouringBookCharacter::ServerFireShot_Implementation(FVector pos, FVector dir)
+void AColouringBookCharacter::ServerFireShot_Implementation(FVector fireLocation, FRotator fireRotator)
 {
-	// TO-DO: spawn projectile, replicate, etc.
+	// TO-DO: replicate, etc.
+	AColouringBookProjectile* projectile = SpawnProjectile(fireLocation, fireRotator);
 
 	// Notify all clients that a player fired
 	MulticastPlayerFired();
@@ -195,5 +191,19 @@ void AColouringBookCharacter::MoveRight(float Value)
 	{
 		AddMovementInput(FVector::RightVector, Value);
 	}
+}
+
+AColouringBookProjectile* AColouringBookCharacter::SpawnProjectile(FVector fireLocation, FRotator fireRotator)
+{
+	AColouringBookProjectile* projectile = nullptr;
+	UWorld* const World = GetWorld();
+
+	if (Role == ROLE_Authority && World != NULL)
+	{
+		// spawn the projectile
+		projectile = World->SpawnActor<AColouringBookProjectile>(fireLocation, fireRotator);
+	}
+
+	return projectile;
 }
 

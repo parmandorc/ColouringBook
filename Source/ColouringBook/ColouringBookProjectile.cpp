@@ -7,6 +7,9 @@
 
 AColouringBookProjectile::AColouringBookProjectile() 
 {
+	// make sure that replicates
+	bReplicates = true;
+
 	// Static reference to the mesh to use for the projectile
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ProjectileMeshAsset(TEXT("/Game/Meshes/Player/TwinStickProjectile.TwinStickProjectile"));
 
