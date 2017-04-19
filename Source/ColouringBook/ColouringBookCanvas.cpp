@@ -2,6 +2,8 @@
 
 #include "ColouringBook.h"
 #include "ColouringBookCanvas.h"
+#include "ColouringBookInkDrop.h"
+#include "ColouringBookGameMode.h"
 
 // Function for enqueueing tasks on the render thread.
 // This is taken from: https://wiki.unrealengine.com/Dynamic_Textures and https://wiki.unrealengine.com/Procedural_Materials
@@ -120,41 +122,52 @@ void AColouringBookCanvas::PostInitializeComponents()
 
 void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if ((OtherActor != NULL) && (OtherActor != this))
+	AColouringBookInkDrop *inkDrop = nullptr;
+	if ((OtherActor != NULL) && (OtherActor != this) && ((inkDrop = Cast<AColouringBookInkDrop>(OtherActor)) != nullptr))
 	{
-		// Get the relative coordinates of the collision inside the canvas
-		// Note: FTransform::InverseTransformPosition transforms the coordinates from world space to local space.
-		//		Local space is given in the range [-50, 50], and we need coordinates in [0, 1].
-		FVector localCoords = (GetTransform().InverseTransformPosition(Hit.ImpactPoint) + 50.0f) * 0.01f;
-
-		// Get texture coordinates of the centre of the circle and its radius
-		int ci = localCoords.X * (canvasTextureWidth - 1);
-		int cj = localCoords.Y * (canvasTextureHeight - 1);
-		static const float SQRT3_INV = 1.0f / FMath::Sqrt(3);
-		float radius = OtherActor->GetComponentsBoundingBox().GetSize().Size() * SQRT3_INV * 0.5f; // world space
-		radius = GetTransform().InverseTransformVector(GetActorForwardVector() * radius).Size() * 0.01f; // local space
-		int r = FMath::Round(radius * canvasTextureWidth);
-
-		// Paint the pixels of the circle
-		for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, canvasTextureHeight - 1); j++)
+		// Get the color of the player that the ink drop is assigned to
+		UWorld *world = GetWorld();
+		AColouringBookGameMode *gameMode = nullptr;
+		if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
 		{
-			for (int i = FMath::Max<int>(ci - r, 0); i <= FMath::Min<int>(ci + r, canvasTextureWidth - 1); i++)
+			FColor color = gameMode->GetPlayerColor(inkDrop->GetOwnerID());
+
+			// Get the relative coordinates of the collision inside the canvas
+			// Note: FTransform::InverseTransformPosition transforms the coordinates from world space to local space.
+			//		Local space is given in the range [-50, 50], and we need coordinates in [0, 1].
+			FVector localCoords = (GetTransform().InverseTransformPosition(Hit.ImpactPoint) + 50.0f) * 0.01f;
+
+			// Get texture coordinates of the centre of the circle and its radius
+			int ci = localCoords.X * (canvasTextureWidth - 1);
+			int cj = localCoords.Y * (canvasTextureHeight - 1);
+			static const float SQRT3_INV = 1.0f / FMath::Sqrt(3);
+			float radius = OtherActor->GetComponentsBoundingBox().GetSize().Size() * SQRT3_INV * 0.5f; // world space
+			radius = GetTransform().InverseTransformVector(GetActorForwardVector() * radius).Size() * 0.01f; // local space
+			int r = FMath::RoundToInt(radius * canvasTextureWidth);
+
+			// Paint the pixels of the circle
+			for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, canvasTextureHeight - 1); j++)
 			{
-				int di = FMath::Abs<int>(ci - i);
-				int dj = FMath::Abs<int>(cj - j);
-				if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
+				for (int i = FMath::Max<int>(ci - r, 0); i <= FMath::Min<int>(ci + r, canvasTextureWidth - 1); i++)
 				{
-					// Update pixel color
-					int pixelIndex = (i + j * canvasTextureWidth) * 4;
-					dynamicColors[pixelIndex + 0] = 0; // blue
-					dynamicColors[pixelIndex + 1] = 0; // green
+					int di = FMath::Abs<int>(ci - i);
+					int dj = FMath::Abs<int>(cj - j);
+					if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
+					{
+						// Update pixel color
+						int pixelIndex = (i + j * canvasTextureWidth) * 4;
+						dynamicColors[pixelIndex + 0] = color.B;
+						dynamicColors[pixelIndex + 1] = color.G;
+						dynamicColors[pixelIndex + 2] = color.R;
+						dynamicColors[pixelIndex + 3] = color.A;
+					}
 				}
 			}
-		}
 
-		// Update texture and assign it to material
-		UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
-		dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
+			// Update texture and assign it to material
+			UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
+			dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
+		}
 
 		// Destroy ink drop
 		OtherActor->Destroy();

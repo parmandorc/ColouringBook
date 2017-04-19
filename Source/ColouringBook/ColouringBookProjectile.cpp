@@ -64,6 +64,7 @@ void AColouringBookProjectile::SpawnInkDrops()
 				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
 			AColouringBookInkDrop *inkDrop = World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
 			inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
+			inkDrop->SetOwnerID(ownerID);
 		}
 	}
 }

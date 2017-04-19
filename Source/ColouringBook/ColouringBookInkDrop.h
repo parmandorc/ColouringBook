@@ -22,8 +22,17 @@ class AColouringBookInkDrop : public AActor
 public:
 	AColouringBookInkDrop();
 
+	void SetOwnerID(uint8 _ownerID) { ownerID = _ownerID; }
+
+private:
+	/* The number ID of the actor that spawned this actor */
+	uint8 ownerID;
+
+public:
 	/** Returns InkDropMesh subobject **/
 	FORCEINLINE UStaticMeshComponent* GetInkDropMesh() const { return InkDropMesh; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
+	/* Returns the number ID of the actor that spawned this actor */
+	FORCEINLINE uint8 GetOwnerID() const { return ownerID; }
 };
