@@ -46,8 +46,8 @@ protected:
 	/** Called for side to side input */
 	void MoveRight(float Value);
 
-	void LocalFireShot(FVector FireDirection);
-	void OnlineFireShot(FVector FireDirection);
+	bool LocalFireShot(FVector FireDirection);
+	bool OnlineFireShot(FVector FireDirection);
 
 private:
 
@@ -56,5 +56,14 @@ private:
 
 	/** Handle for efficient management of ShotTimerExpired timer */
 	FTimerHandle TimerHandle_ShotTimerExpired;
+
+	// FireShot done by the server
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFireShot(FVector pos, FVector dir);
+
+	// Called by the server to inform all the clients that a player fired
+	UFUNCTION(NetMulticast, unreliable)
+	void MulticastPlayerFired();
+
 };
 
