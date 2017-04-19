@@ -130,7 +130,10 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		// Get texture coordinates of the centre of the circle and its radius
 		int ci = localCoords.X * (canvasTextureWidth - 1);
 		int cj = localCoords.Y * (canvasTextureHeight - 1);
-		int r = 2;
+		static const float SQRT3_INV = 1.0f / FMath::Sqrt(3);
+		float radius = OtherActor->GetComponentsBoundingBox().GetSize().Size() * SQRT3_INV * 0.5f; // world space
+		radius = GetTransform().InverseTransformVector(GetActorForwardVector() * radius).Size() * 0.01f; // local space
+		int r = FMath::Round(radius * canvasTextureWidth);
 
 		// Paint the pixels of the circle
 		for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, canvasTextureHeight - 1); j++)
@@ -152,5 +155,8 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		// Update texture and assign it to material
 		UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
 		dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
+
+		// Destroy ink drop
+		OtherActor->Destroy();
 	}
 }

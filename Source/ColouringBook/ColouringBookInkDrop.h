@@ -22,10 +22,6 @@ class AColouringBookInkDrop : public AActor
 public:
 	AColouringBookInkDrop();
 
-	/** Function to handle the projectile hitting something */
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
 	/** Returns InkDropMesh subobject **/
 	FORCEINLINE UStaticMeshComponent* GetInkDropMesh() const { return InkDropMesh; }
 	/** Returns ProjectileMovement subobject **/
