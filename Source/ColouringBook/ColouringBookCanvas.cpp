@@ -63,9 +63,8 @@ void UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions
 
 AColouringBookCanvas::AColouringBookCanvas()
 {
-	// Set canvas texture size
-	canvasTextureWidth = 297;
-	canvasTextureHeight = 210;
+	// Defaults
+	CanvasResolution = 10;
 
 	// Set callback for when canvas is hit by something
 	GetStaticMeshComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCanvas::OnHit);
@@ -82,6 +81,11 @@ void AColouringBookCanvas::PostInitializeComponents()
 
 	// Convert the static material in our mesh into a dynamic one, and store it (please note that if you have more than one material that you wish to mark dynamic, do so here).
 	dynamicMaterials.Add(GetStaticMeshComponent()->CreateAndSetMaterialInstanceDynamic(0));
+
+	// Set canvas texture size
+	FVector scale = GetActorScale3D();
+	canvasTextureWidth = CanvasResolution * scale.X;
+	canvasTextureHeight = canvasTextureWidth * (scale.Y / scale.X); // Respect the aspect ratio of the actor
 
 	// Create a dynamic texture with the default compression (B8G8R8A8)
 	dynamicTexture = UTexture2D::CreateTransient(canvasTextureWidth, canvasTextureHeight);

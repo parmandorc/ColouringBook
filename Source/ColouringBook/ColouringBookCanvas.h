@@ -13,6 +13,13 @@ class COLOURINGBOOK_API AColouringBookCanvas : public AStaticMeshActor
 {
 	GENERATED_BODY()
 	
+	/* The resolution of the canvas texture.
+	 * The value will be affected by the actor's scale, so the resolution is will be in terms of world space
+	 *	(same resolution fo actors of different shapes and scales will produce textures with the same quality on screen).
+	 */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
+	float CanvasResolution;
+
 public:
 	AColouringBookCanvas();
 
