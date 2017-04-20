@@ -17,10 +17,11 @@ class AColouringBookGameMode : public AGameModeBase
 public:
 	AColouringBookGameMode();
 
-	virtual void StartPlay();
+	virtual void StartPlay() override;
 
-	virtual void InitGameState();
-	virtual bool ShouldSpawnAtStartSpot(AController* Player) { return false; }
+	virtual void InitGameState() override;
+	virtual bool ShouldSpawnAtStartSpot(AController* Player) override { return false; }
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player);
 	
 	/* Returns the color that is associated with a player ID */
@@ -47,6 +48,10 @@ protected:
 	void StartOnlineMultiplayerPlay();
 
 	void LocalMultiplayerCreatePlayers(int numPlayers);
+
+	void SpawnNewPlayer(APlayerController* player);
+
+	AActor* GetPlayerStart(AController* Player);
 
 private:
 

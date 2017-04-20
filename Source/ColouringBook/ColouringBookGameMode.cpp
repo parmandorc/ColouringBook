@@ -13,6 +13,8 @@ AColouringBookGameMode::AColouringBookGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+
+	bReplicates = true;
 }
 
 void AColouringBookGameMode::InitGameState()
@@ -25,26 +27,54 @@ void AColouringBookGameMode::InitGameState()
 
 void AColouringBookGameMode::StartPlay()
 {
-	multiplayerMode = MultiplayerMode::ONLINE; // FIXME: This should probably come from UI
-
-	switch (multiplayerMode)
-	{
-	case MultiplayerMode::LOCAL:
-		StartLocalMultiplayerPlay();
-		break;
-	case MultiplayerMode::ONLINE:
-		StartOnlineMultiplayerPlay();
-		break;
-	default:
-		break;
-	}
-
 	AGameModeBase::StartPlay();
+
+	if (Role == ROLE_Authority)
+	{
+		multiplayerMode = MultiplayerMode::ONLINE; // FIXME: This should probably come from UI
+
+		switch (multiplayerMode)
+		{
+		case MultiplayerMode::LOCAL:
+			StartLocalMultiplayerPlay();
+			break;
+		case MultiplayerMode::ONLINE:
+			StartOnlineMultiplayerPlay();
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void AColouringBookGameMode::StartOnlineMultiplayerPlay()
 {
-	// TO-DO
+	// TO-DO: ServerTravel ?
+}
+
+void AColouringBookGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	// spawn new player
+	AGameModeBase::PostLogin(NewPlayer);
+	SpawnNewPlayer(NewPlayer);
+}
+
+void AColouringBookGameMode::SpawnNewPlayer(APlayerController* player)
+{
+	if (Role != ROLE_Authority)
+	{
+		return;
+	}
+
+	// Make sure that the player is spawned at the correct PlayerStart
+	AActor* playerStart = GetPlayerStart(player);
+	if (playerStart)
+	{
+		FVector location = playerStart->GetActorLocation();
+
+		AColouringBookCharacter* character = Cast<AColouringBookCharacter>(player->GetCharacter());
+		character->SetActorLocation(location);
+	}
 }
 
 void AColouringBookGameMode::StartLocalMultiplayerPlay()
@@ -70,15 +100,20 @@ void AColouringBookGameMode::LocalMultiplayerCreatePlayers(int numPlayers)
 	}
 }
 
+
 AActor* AColouringBookGameMode::ChoosePlayerStart_Implementation(AController* Player)
 {
-	// Apparently there is no direct relationship between Player and ControllerId
-	// and PlayerStart and ControllerId at this point?
-	// Therefore, PlayerStart is choose by name(not ideal if the name changes in the editor...) according to the number of players created so far
-	int32 numPlayers = GetWorld()->GetGameInstance()->GetNumLocalPlayers();
+	return GetPlayerStart(Player);
+}
+
+AActor* AColouringBookGameMode::GetPlayerStart(AController* Player)
+{
+	// PlayerStart is choosen by name(not ideal if the name changes in the editor...) according to the number of players created so far
+
+	int32 numPlayers = GetNumPlayers();
 	FString playerName = "PlayerStart";
 	playerName.AppendInt(numPlayers);
-	
+
 	for (AActor* actor : playerStarts)
 	{
 		if (actor->GetName() == playerName)
