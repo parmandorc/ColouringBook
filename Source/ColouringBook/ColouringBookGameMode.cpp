@@ -49,7 +49,7 @@ void AColouringBookGameMode::StartOnlineMultiplayerPlay()
 
 void AColouringBookGameMode::StartLocalMultiplayerPlay()
 {
-	int numPlayers = 2; // FIXME: This number should problably come from UI, unless we are using a players pop in/out feature
+	int numPlayers = GetMaxNumPlayers();
 	LocalMultiplayerCreatePlayers(numPlayers);
 }
 

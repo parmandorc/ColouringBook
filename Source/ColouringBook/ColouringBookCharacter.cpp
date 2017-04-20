@@ -202,6 +202,7 @@ AColouringBookProjectile* AColouringBookCharacter::SpawnProjectile(FVector fireL
 	{
 		// spawn the projectile
 		projectile = World->SpawnActor<AColouringBookProjectile>(fireLocation, fireRotator);
+		projectile->SetOwnerID(PlayerID);
 	}
 
 	return projectile;

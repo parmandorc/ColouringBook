@@ -9,20 +9,30 @@ class AColouringBookCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-public:
-	AColouringBookCharacter();
+	/* The number to identify this player */
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	uint8 PlayerID;
 
 	/** Offset from the ships location to spawn projectiles */
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector GunOffset;
-	
+
 	/* How fast the weapon will fire */
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	float FireRate;
 
 	/** Sound to play each time we fire */
-	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USoundBase* FireSound;
+
+	/* Flag to control firing  */
+	uint32 bCanFire : 1;
+
+	/** Handle for efficient management of ShotTimerExpired timer */
+	FTimerHandle TimerHandle_ShotTimerExpired;
+
+public:
+	AColouringBookCharacter();
 
 	// Begin Actor Interface
 	virtual void Tick(float DeltaSeconds) override;
@@ -39,6 +49,9 @@ public:
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
 
+	/* Returns the number that identifies this player */
+	FORCEINLINE uint8 GetPlayerID() { return PlayerID; }
+
 protected:
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -51,12 +64,6 @@ protected:
 
 private:
 
-	/* Flag to control firing  */
-	uint32 bCanFire : 1;
-
-	/** Handle for efficient management of ShotTimerExpired timer */
-	FTimerHandle TimerHandle_ShotTimerExpired;
-
 	// FireShot done by the server
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerFireShot(FVector fireLocation, FRotator fireRotator);
@@ -66,6 +73,5 @@ private:
 	void MulticastPlayerFired();
 
 	class AColouringBookProjectile* SpawnProjectile(FVector fireLocation, FRotator fireRotator);
-
 };
 
