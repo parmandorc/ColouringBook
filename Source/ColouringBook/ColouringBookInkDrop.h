@@ -22,11 +22,15 @@ class AColouringBookInkDrop : public AActor
 public:
 	AColouringBookInkDrop();
 
-	void SetOwnerID(uint8 _ownerID) { ownerID = _ownerID; }
+	// Sets the owner
+	void SetOwnerID(uint8 _ownerID);
 
 private:
 	/* The number ID of the actor that spawned this actor */
 	uint8 ownerID;
+
+	/* The dynamic material instance of the ink drop */
+	class UMaterialInstanceDynamic* dynamicMaterial;
 
 public:
 	/** Returns InkDropMesh subobject **/
