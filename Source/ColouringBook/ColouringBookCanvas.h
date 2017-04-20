@@ -48,4 +48,10 @@ private:
 	
 	// The size of the texture. Derived from the CanvasResolution and the shape of the canvas mesh
 	int32 canvasTextureWidth, canvasTextureHeight;
+
+	// A bitset that holds an optimized version of the canvas data, used for efficient counting of the score
+	TBitArray<FDefaultBitArrayAllocator> scoreBitset;
+
+	// An ongoing count of the score of each player
+	TArray<uint32> scoreCounts;
 };

@@ -118,6 +118,15 @@ void AColouringBookCanvas::PostInitializeComponents()
 	// Update texture and assign it to material
 	UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
 	dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
+
+	// Initialize the score bitset and counts
+	UWorld *world = GetWorld();
+	AColouringBookGameMode *gameMode = nullptr;
+	if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
+	{
+		scoreBitset.Init(false, gameMode->GetMaxNumPlayers() * canvasTextureWidth * canvasTextureHeight);
+		scoreCounts.Init(0, gameMode->GetMaxNumPlayers());
+	}
 }
 
 void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -160,6 +169,23 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 						dynamicColors[pixelIndex + 1] = color.G;
 						dynamicColors[pixelIndex + 2] = color.R;
 						dynamicColors[pixelIndex + 3] = color.A;
+
+						// Update score
+						uint8 playerID = inkDrop->GetOwnerID();
+						int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+						if (scoreBitset[bitIndex + playerID] == false) // Only update score if the player painted a new pixel
+						{
+							scoreBitset[bitIndex + playerID] = true;
+							++scoreCounts[playerID];
+						}
+						for (int k = 0; k < gameMode->GetMaxNumPlayers(); k++) // Set bit and score if this overwrote a pixel painted by another player
+						{
+							if (playerID != k && scoreBitset[bitIndex + k] == true)
+							{
+								scoreBitset[bitIndex + k] = false;
+								--scoreCounts[k];
+							}
+						}
 					}
 				}
 			}
