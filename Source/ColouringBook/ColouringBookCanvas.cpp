@@ -137,7 +137,8 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		// Get the color of the player that the ink drop is assigned to
 		UWorld *world = GetWorld();
 		AColouringBookGameMode *gameMode = nullptr;
-		if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
+		if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr)
+			&& (inkDrop->GetOwnerID() < gameMode->GetMaxNumPlayers()))
 		{
 			FColor color = gameMode->GetPlayerColor(inkDrop->GetOwnerID());
 
