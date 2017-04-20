@@ -22,7 +22,6 @@ public:
 	virtual void InitGameState() override;
 	virtual bool ShouldSpawnAtStartSpot(AController* Player) override { return false; }
 	virtual void PostLogin(APlayerController* NewPlayer) override;
-	virtual AActor* ChoosePlayerStart_Implementation(AController* Player);
 	
 	/* Returns the color that is associated with a player ID */
 	FORCEINLINE FColor GetPlayerColor(uint8 playerIndex) const { return (playerIndex < playerColors.Num()) ? playerColors[playerIndex] : FColor::White; }
@@ -44,10 +43,7 @@ public:
 
 protected:
 
-	void StartLocalMultiplayerPlay();
-	void StartOnlineMultiplayerPlay();
-
-	void LocalMultiplayerCreatePlayers(int numPlayers);
+	void LocalMultiplayerCreatePlayers();
 
 	void SpawnNewPlayer(APlayerController* player);
 

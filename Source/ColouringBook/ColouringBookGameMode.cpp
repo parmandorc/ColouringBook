@@ -36,20 +36,15 @@ void AColouringBookGameMode::StartPlay()
 		switch (multiplayerMode)
 		{
 		case MultiplayerMode::LOCAL:
-			StartLocalMultiplayerPlay();
+			LocalMultiplayerCreatePlayers();
 			break;
 		case MultiplayerMode::ONLINE:
-			StartOnlineMultiplayerPlay();
+			// TO-DO: ServerTravel ?
 			break;
 		default:
 			break;
 		}
 	}
-}
-
-void AColouringBookGameMode::StartOnlineMultiplayerPlay()
-{
-	// TO-DO: ServerTravel ?
 }
 
 void AColouringBookGameMode::PostLogin(APlayerController* NewPlayer)
@@ -77,35 +72,6 @@ void AColouringBookGameMode::SpawnNewPlayer(APlayerController* player)
 	}
 }
 
-void AColouringBookGameMode::StartLocalMultiplayerPlay()
-{
-	int numPlayers = GetMaxNumPlayers();
-	LocalMultiplayerCreatePlayers(numPlayers);
-}
-
-void AColouringBookGameMode::LocalMultiplayerCreatePlayers(int numPlayers)
-{
-	// TO-DO: Investigate how to surpass MaxSplitscreenPlayers constraint because it is the one that doesn´t allow to create 
-	// more than 4 players (regardless of using split screen or not)
-	const int MAX_PLAYERS = GetWorld()->GetGameInstance()->GetGameViewportClient()->MaxSplitscreenPlayers;
-
-	// somehow/somewhere the first player is always created...
-	// TO-DO: Investigate if we are able to control first player creation at this point
-	int32 playerIndex = GetWorld()->GetGameInstance()->GetNumLocalPlayers();
-
-	while (playerIndex < numPlayers && playerIndex < MAX_PLAYERS)
-	{
-		UGameplayStatics::CreatePlayer(GetWorld());
-		playerIndex++;
-	}
-}
-
-
-AActor* AColouringBookGameMode::ChoosePlayerStart_Implementation(AController* Player)
-{
-	return GetPlayerStart(Player);
-}
-
 AActor* AColouringBookGameMode::GetPlayerStart(AController* Player)
 {
 	// PlayerStart is choosen by name(not ideal if the name changes in the editor...) according to the number of players created so far
@@ -125,3 +91,19 @@ AActor* AColouringBookGameMode::GetPlayerStart(AController* Player)
 	return nullptr;
 }
 
+void AColouringBookGameMode::LocalMultiplayerCreatePlayers()
+{
+	// TO-DO: Investigate how to surpass MaxSplitscreenPlayers constraint because it is the one that doesn´t allow to create 
+	// more than 4 players (regardless of using split screen or not)
+	const int MAX_PLAYERS = GetWorld()->GetGameInstance()->GetGameViewportClient()->MaxSplitscreenPlayers;
+
+	// somehow/somewhere the first player is always created...
+	// TO-DO: Investigate if we are able to control first player creation at this point
+	int32 playerIndex = GetWorld()->GetGameInstance()->GetNumLocalPlayers();
+
+	while (playerIndex < GetMaxNumPlayers() && playerIndex < MAX_PLAYERS)
+	{
+		UGameplayStatics::CreatePlayer(GetWorld());
+		playerIndex++;
+	}
+}
