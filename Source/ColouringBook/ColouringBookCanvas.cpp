@@ -71,6 +71,9 @@ AColouringBookCanvas::AColouringBookCanvas()
 
 	// Set callback for when canvas is hit by something
 	GetStaticMeshComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCanvas::OnHit);
+
+	// make sure that the canvas replicates
+	bReplicates = true;
 }
 
 void AColouringBookCanvas::Tick(float DeltaSeconds)

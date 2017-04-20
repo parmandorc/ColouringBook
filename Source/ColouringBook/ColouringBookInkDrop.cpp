@@ -29,6 +29,9 @@ AColouringBookInkDrop::AColouringBookInkDrop()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
+	// make sure that the ink drop replicates
+	bReplicates = true;
 }
 
 void AColouringBookInkDrop::SetOwnerID(uint8 _ownerID)
