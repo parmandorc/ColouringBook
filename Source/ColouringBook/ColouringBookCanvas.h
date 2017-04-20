@@ -24,6 +24,10 @@ class COLOURINGBOOK_API AColouringBookCanvas : public AStaticMeshActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
 	class UTexture2D* MaskTexture;
 
+	/* When the mask debug mode is on, only the pixels of the canvas that are inside the painting (and count towards score) will be colored.*/
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
+	bool MaskDebugModeOn;
+
 public:
 	AColouringBookCanvas();
 

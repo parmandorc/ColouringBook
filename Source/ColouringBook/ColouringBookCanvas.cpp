@@ -67,6 +67,7 @@ AColouringBookCanvas::AColouringBookCanvas()
 {
 	// Defaults
 	CanvasResolution = 10;
+	MaskDebugModeOn = false;
 
 	// Set callback for when canvas is hit by something
 	GetStaticMeshComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCanvas::OnHit);
@@ -191,11 +192,14 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 						bool isScore = maskBitset[mi + mj * maskTextureWidth];
 
 						// Update pixel color
-						int pixelIndex = (i + j * canvasTextureWidth) * 4;
-						dynamicColors[pixelIndex + 0] = color.B;
-						dynamicColors[pixelIndex + 1] = color.G;
-						dynamicColors[pixelIndex + 2] = color.R;
-						dynamicColors[pixelIndex + 3] = color.A;
+						if (!MaskDebugModeOn || isScore)
+						{
+							int pixelIndex = (i + j * canvasTextureWidth) * 4;
+							dynamicColors[pixelIndex + 0] = color.B;
+							dynamicColors[pixelIndex + 1] = color.G;
+							dynamicColors[pixelIndex + 2] = color.R;
+							dynamicColors[pixelIndex + 3] = color.A;
+						}
 
 						// Update score for current player
 						uint8 playerID = inkDrop->GetOwnerID();
