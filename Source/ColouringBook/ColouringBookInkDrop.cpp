@@ -1,5 +1,6 @@
 #include "ColouringBook.h"
 #include "ColouringBookInkDrop.h"
+#include "ColouringBookGameMode.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AColouringBookInkDrop::AColouringBookInkDrop()
@@ -12,8 +13,10 @@ AColouringBookInkDrop::AColouringBookInkDrop()
 	InkDropMesh->SetStaticMesh(InkDropMeshAsset.Object);
 	InkDropMesh->SetupAttachment(RootComponent);
 	InkDropMesh->BodyInstance.SetCollisionProfileName("InkDrop");
-	InkDropMesh->OnComponentHit.AddDynamic(this, &AColouringBookInkDrop::OnHit); // set up a notification for when this component hits something
 	RootComponent = InkDropMesh;
+
+	// Create the dynamic material instance
+	dynamicMaterial = InkDropMesh->CreateAndSetMaterialInstanceDynamic(0);
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement0"));
@@ -28,13 +31,15 @@ AColouringBookInkDrop::AColouringBookInkDrop()
 	InitialLifeSpan = 3.0f;
 }
 
-void AColouringBookInkDrop::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+void AColouringBookInkDrop::SetOwnerID(uint8 _ownerID)
 {
-	// Paint the canvas
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
-	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
-	}
+	ownerID = _ownerID;
 
-	Destroy();
+	// Use the color associated with this ID
+	UWorld *world = GetWorld();
+	AColouringBookGameMode *gameMode = nullptr;
+	if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
+	{
+		dynamicMaterial->SetVectorParameterValue("DiffuseColor", gameMode->GetPlayerColor(ownerID));
+	}
 }

@@ -90,7 +90,8 @@ void AColouringBookCharacter::FireShot(FVector FireDirection)
 			if (World != NULL)
 			{
 				// spawn the projectile
-				World->SpawnActor<AColouringBookProjectile>(SpawnLocation, FireRotation);
+				AColouringBookProjectile *projectile = World->SpawnActor<AColouringBookProjectile>(SpawnLocation, FireRotation);
+				projectile->SetOwnerID(PlayerID);
 			}
 
 			bCanFire = false;

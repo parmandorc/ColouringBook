@@ -62,7 +62,9 @@ void AColouringBookProjectile::SpawnInkDrops()
 			const FRotator randomRotation = FRotator::MakeFromEuler(FVector(0.0f,
 				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance),
 				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
-			World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
+			AColouringBookInkDrop *inkDrop = World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
+			inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
+			inkDrop->SetOwnerID(ownerID);
 		}
 	}
 }
