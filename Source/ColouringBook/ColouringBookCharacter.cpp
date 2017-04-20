@@ -149,12 +149,6 @@ bool AColouringBookCharacter::OnlineFireShot(FVector fireLocation, FRotator fire
 bool AColouringBookCharacter::ServerFireShot_Validate(FVector fireLocation, FRotator fireRotator)
 {	
 	// TO-DO: proper validation, anti-cheating measures, etc.
-
-	if (fireRotator.IsZero())
-	{
-		return false;
-	}
-
 	return true;
 }
 
