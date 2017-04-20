@@ -20,6 +20,10 @@ class COLOURINGBOOK_API AColouringBookCanvas : public AStaticMeshActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
 	float CanvasResolution;
 
+	/* The mask texture to use with the painting */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
+	class UTexture2D* MaskTexture;
+
 public:
 	AColouringBookCanvas();
 
@@ -40,7 +44,6 @@ private:
 	FUpdateTextureRegion2D* updateTextureRegion;
 
 	// The dynamic texture that is being painted on, acting as the canvas
-	UPROPERTY()
 	UTexture2D *dynamicTexture;
 
 	// The color matrix that is being painted on the canvas texture
@@ -54,4 +57,11 @@ private:
 
 	// An ongoing count of the score of each player
 	TArray<uint32> scoreCounts;
+
+	// The painting mask bitset and its dimensions
+	int32 maskTextureWidth, maskTextureHeight;
+	TBitArray<FDefaultBitArrayAllocator> maskBitset;
+
+	// The maximum score that can be achieved with the active painting
+	uint32 maxScore;
 };

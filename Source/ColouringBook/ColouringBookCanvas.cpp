@@ -127,6 +127,27 @@ void AColouringBookCanvas::PostInitializeComponents()
 		scoreBitset.Init(false, gameMode->GetMaxNumPlayers() * canvasTextureWidth * canvasTextureHeight);
 		scoreCounts.Init(0, gameMode->GetMaxNumPlayers());
 	}
+
+	// Construct the mask bitset data
+	if (MaskTexture != nullptr)
+	{
+		maskTextureWidth = MaskTexture->GetSizeX();
+		maskTextureHeight = MaskTexture->GetSizeY();
+		const FColor* maskData = static_cast<const FColor*>(MaskTexture->PlatformData->Mips[0].BulkData.LockReadOnly());
+		
+		for (int j = 0; j < maskTextureHeight; j++)
+		{
+			for (int i = 0; i < maskTextureWidth; i++)
+			{
+				int pixelIndex = i + j * maskTextureWidth;
+				bool bitValue = !((maskData[pixelIndex].R > 127) || (maskData[pixelIndex].G > 127) || (maskData[pixelIndex].B > 127));
+				maskBitset.Add(bitValue);
+				maxScore += (int)bitValue;
+			}
+		}
+
+		MaskTexture->PlatformData->Mips[0].BulkData.Unlock();
+	}
 }
 
 void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -164,6 +185,11 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 					int dj = FMath::Abs<int>(cj - j);
 					if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
 					{
+						// Determine if the painted pixel is inside the painting
+						int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
+						int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
+						bool isScore = maskBitset[mi + mj * maskTextureWidth];
+
 						// Update pixel color
 						int pixelIndex = (i + j * canvasTextureWidth) * 4;
 						dynamicColors[pixelIndex + 0] = color.B;
@@ -171,20 +197,22 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 						dynamicColors[pixelIndex + 2] = color.R;
 						dynamicColors[pixelIndex + 3] = color.A;
 
-						// Update score
+						// Update score for current player
 						uint8 playerID = inkDrop->GetOwnerID();
 						int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
 						if (scoreBitset[bitIndex + playerID] == false) // Only update score if the player painted a new pixel
 						{
 							scoreBitset[bitIndex + playerID] = true;
-							++scoreCounts[playerID];
+							scoreCounts[playerID] += (int)isScore;
 						}
-						for (int k = 0; k < gameMode->GetMaxNumPlayers(); k++) // Set bit and score if this overwrote a pixel painted by another player
+
+						// Update score for overwritten player if needed
+						for (int k = 0; k < gameMode->GetMaxNumPlayers(); k++)
 						{
 							if (playerID != k && scoreBitset[bitIndex + k] == true)
 							{
 								scoreBitset[bitIndex + k] = false;
-								--scoreCounts[k];
+								scoreCounts[k] -= (int)isScore;
 							}
 						}
 					}
