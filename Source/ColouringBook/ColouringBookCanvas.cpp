@@ -99,7 +99,7 @@ void AColouringBookCanvas::PostInitializeComponents()
 	// Initalize our dynamic pixel array with data size
 	dynamicColors = new uint8[canvasTextureWidth * canvasTextureHeight * 4]; // * 4 because each color is made out of 4 uint8
 
-	// Initialize texture colors to white
+	// Initialize texture colors to transparent
 	for (int j = 0; j < canvasTextureHeight; j++)
 	{
 		for (int i = 0; i < canvasTextureWidth; i++)
@@ -108,7 +108,7 @@ void AColouringBookCanvas::PostInitializeComponents()
 			dynamicColors[pixelIndex + 0] = 255; // blue
 			dynamicColors[pixelIndex + 1] = 255; // green
 			dynamicColors[pixelIndex + 2] = 255; // red
-			dynamicColors[pixelIndex + 3] = 255; // alpha
+			dynamicColors[pixelIndex + 3] = 0; // alpha
 		}
 	}
 
