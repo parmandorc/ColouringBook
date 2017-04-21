@@ -26,6 +26,7 @@ void ADirector::BeginPlay()
 void ADirector::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//UE_LOG(LogTemp, Warning, TEXT("CHECKING DTIME"));
 
 }
 
@@ -44,8 +45,6 @@ FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
 
 }
 
-//TODO make enemies not spawn near player
-
 //Called every x seconds with FTimerManager::SetTimer()
 void ADirector::SpawnPuppets()
 {
@@ -62,7 +61,7 @@ void ADirector::SpawnPuppets()
 
 		EnemiesSpawned++;
 
-		//setting limit to spawn enemies. TODO change later or rewrite
+		//setting limit to spawn enemies. 
 		if (EnemiesSpawned > 15) 
 		{
 			GetWorld()->GetTimerManager().ClearAllTimersForObject(this);

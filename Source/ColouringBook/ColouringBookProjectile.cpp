@@ -5,6 +5,7 @@
 #include "ColouringBookInkDrop.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+
 AColouringBookProjectile::AColouringBookProjectile() 
 {
 	// Static reference to the mesh to use for the projectile
@@ -67,18 +68,23 @@ void AColouringBookProjectile::SpawnInkDrops()
 			inkDrop->SetOwnerID(ownerID);
 		}
 
-
-
 	}
-
+	 
 }
 
-void Tick(float DeltaTime)
+void AColouringBookProjectile::Tick(float DeltaTime)
 {
+	Super::Tick(DeltaTime);
+	
+	UE_LOG(LogTemp, Warning, TEXT("CHECKING DTIME"));
+}
 
 
 
-};
+
+
+
+
 
 //TODO Check every frame if an ink drop has hit the floor
 	//if it hit the floor, then expand within a certain radius and for a certain time
