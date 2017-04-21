@@ -2,6 +2,7 @@
 
 #include "ColouringBook.h"
 #include "ColouringBookProjectile.h"
+#include "ColouringBookInkDrop.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
 AColouringBookProjectile::AColouringBookProjectile() 
@@ -28,6 +29,10 @@ AColouringBookProjectile::AColouringBookProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
+
+	// Defaults
+	InkDropsSpawnAmount = 10;
+	InkDropsSpawnAngleVariance = 15.0f;
 }
 
 void AColouringBookProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
@@ -36,7 +41,30 @@ void AColouringBookProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* Other
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
+
+		SpawnInkDrops();
 	}
 
 	Destroy();
+}
+
+void AColouringBookProjectile::SpawnInkDrops()
+{
+	const FRotator fireRotation = GetActorRotation();
+	const FVector spawnLocation = GetActorLocation();// + FireRotation.RotateVector(GunOffset);
+
+	UWorld* const World = GetWorld();
+	if (World != NULL)
+	{
+		for (int i = 0; i < InkDropsSpawnAmount; i++)
+		{
+			// spawn the projectile
+			const FRotator randomRotation = FRotator::MakeFromEuler(FVector(0.0f,
+				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance),
+				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
+			AColouringBookInkDrop *inkDrop = World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
+			inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
+			inkDrop->SetOwnerID(ownerID);
+		}
+	}
 }
