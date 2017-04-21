@@ -66,5 +66,19 @@ void AColouringBookProjectile::SpawnInkDrops()
 			inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
 			inkDrop->SetOwnerID(ownerID);
 		}
+
+
+
 	}
+
 }
+
+void Tick(float DeltaTime)
+{
+
+
+
+};
+
+//TODO Check every frame if an ink drop has hit the floor
+	//if it hit the floor, then expand within a certain radius and for a certain time

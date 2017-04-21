@@ -51,3 +51,4 @@ public:
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 };
 
+
