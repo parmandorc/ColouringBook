@@ -3,6 +3,7 @@
 #include "ColouringBook.h"
 #include "ColouringBookGameMode.h"
 #include "ColouringBookCharacter.h"
+#include "ColouringBookPlayerController.h"
 
 AColouringBookGameMode::AColouringBookGameMode()
 	: multiplayerMode(MultiplayerMode::UNDEFINED)
@@ -14,6 +15,18 @@ AColouringBookGameMode::AColouringBookGameMode()
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
 
+	// set default player controller to our Blueprinted PlayerController
+	static ConstructorHelpers::FClassFinder<AColouringBookPlayerController> PlayerControllerBPClass(TEXT("/Game/Blueprints/ColouringBookPlayerController"));
+	if (PlayerControllerBPClass.Class != NULL)
+	{
+		PlayerControllerClass = PlayerControllerBPClass.Class;
+	}
+	else
+	{
+		PlayerControllerClass = AColouringBookPlayerController::StaticClass();
+	}
+	
+	// make sure it replicates
 	bReplicates = true;
 }
 
