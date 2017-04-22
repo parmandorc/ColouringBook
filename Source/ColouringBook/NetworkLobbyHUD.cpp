@@ -8,18 +8,38 @@
 void ANetworkLobbyHUD::DrawHUD()
 {
 	Super::DrawHUD();
+	
+	bool isServer = (GetWorld()->GetAuthGameMode() != nullptr);
 
-	FString text = "NetworkLobbyHUD";
+	// draw debug info
+	FString hudDebugInfo = isServer ? "Server NetworkLobbyHUD - " : "Client NetworkLobbyHUD - ";
+	FString thisPlayerName;
 
-	if (GetWorld()->GetAuthGameMode())
+	APlayerController* playerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (playerController)
 	{
-		text = "Server NetworkLobbyHUD";
-	}
-	else
-	{
-		text = "Client NetworkLobbyHUD";
+		thisPlayerName = playerController->GetLocalPlayer()->GetName();
 	}
 
-	DrawText(text, FColor::Green, 50, 50);
+	hudDebugInfo.Append(thisPlayerName);
+	DrawText(hudDebugInfo, FColor::Cyan, 0, 0);
+
+	// draw status info
+	FString statusInfo = isServer ? "Press S to start" : "Waiting for server";
+	DrawText(statusInfo, isServer ? FColor::White : FColor::Red, Canvas->SizeX / 2, Canvas->SizeY / 2);
+
+	// draw players that are connected
+	
+	AGameStateBase* gameState = GetWorld()->GetGameState();
+	if (gameState)
+	{
+		for (int i = 0; i < gameState->PlayerArray.Num(); i++)
+		{
+			APlayerState* playerState = gameState->PlayerArray[i];
+
+			FString readyPlayer = playerState->GetName() + " ready!";
+			DrawText(readyPlayer, FColor::Green, 50, 50 + i*20);
+		}
+	}
 }
 
