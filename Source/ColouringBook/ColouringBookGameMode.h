@@ -18,6 +18,7 @@ public:
 	AColouringBookGameMode();
 
 	virtual void StartPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void InitGameState() override;
 	virtual bool ShouldSpawnAtStartSpot(AController* Player) override { return false; }
@@ -41,6 +42,17 @@ public:
 
 	MultiplayerMode GetMultiplayerMode() { return multiplayerMode; }
 
+	enum class ColouringBookGameState
+	{
+		UNDEFINED,
+
+		WAITING_FOR_TRAVELLING,
+		SERVER_TRAVELLING,
+		PLAYING,
+
+		NUM_STATES
+	};
+
 protected:
 
 	void LocalMultiplayerCreatePlayers();
@@ -49,11 +61,17 @@ protected:
 
 	AActor* GetPlayerStart(AController* Player);
 
+	void UpdateState(float deltaSeconds);
+
+	bool InPlayingMap();
+
 private:
 
 	TArray<AActor*> playerStarts;
 
 	MultiplayerMode multiplayerMode;
+
+	static ColouringBookGameState s_state;
 };
 
 

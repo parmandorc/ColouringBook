@@ -5,6 +5,9 @@
 #include "ColouringBookCharacter.h"
 #include "ColouringBookPlayerController.h"
 
+
+AColouringBookGameMode::ColouringBookGameState AColouringBookGameMode::s_state = AColouringBookGameMode::ColouringBookGameState::UNDEFINED;
+
 AColouringBookGameMode::AColouringBookGameMode()
 	: multiplayerMode(MultiplayerMode::UNDEFINED)
 {
@@ -28,6 +31,10 @@ AColouringBookGameMode::AColouringBookGameMode()
 	
 	// make sure it replicates
 	bReplicates = true;
+
+	// make sure it ticks
+	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bCanEverTick = true;
 }
 
 void AColouringBookGameMode::InitGameState()
@@ -52,12 +59,76 @@ void AColouringBookGameMode::StartPlay()
 			LocalMultiplayerCreatePlayers();
 			break;
 		case MultiplayerMode::ONLINE:
-			// TO-DO: ServerTravel ?
+			if (s_state == ColouringBookGameState::UNDEFINED)
+			{
+				if (InPlayingMap())
+				{
+					// Hack: Do not wait for server start as the map is already the playing map
+					s_state = ColouringBookGameState::PLAYING;
+				}
+				else
+				{
+					s_state = ColouringBookGameState::WAITING_FOR_TRAVELLING;
+				}
+			}
 			break;
 		default:
 			break;
 		}
 	}
+}
+
+void AColouringBookGameMode::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	// update current state
+	UpdateState(DeltaSeconds);
+}
+
+void AColouringBookGameMode::UpdateState(float deltaSeconds)
+{
+	switch (s_state)
+	{
+	case ColouringBookGameState::WAITING_FOR_TRAVELLING:
+	{
+		if (Role == ROLE_Authority)
+		{
+			// Check for travelling
+			APlayerController* serverPlayerController = GetWorld()->GetFirstPlayerController();
+			if (serverPlayerController && serverPlayerController->IsInputKeyDown(EKeys::S))
+			{
+				s_state = ColouringBookGameState::SERVER_TRAVELLING;
+
+				FString map = TEXT("/Game/Maps/TwinStickExampleMap");
+				map.Append("?Listen"); // make sure that server will accept connecting clients in the travelled map
+				GetWorld()->ServerTravel(map);
+			}
+		}
+		break;
+	}
+	case ColouringBookGameState::SERVER_TRAVELLING:
+	{
+		// TO-DO: Handle travelling failure
+		bool travellingSucceeded = InPlayingMap();
+		if (travellingSucceeded)
+		{
+			s_state = ColouringBookGameState::PLAYING;
+		}
+
+		break;
+	}
+	case ColouringBookGameState::PLAYING:
+		break;
+	default:
+		break;
+	}
+}
+
+bool AColouringBookGameMode::InPlayingMap()
+{
+	FString mapName = GetWorld()->GetMapName();
+	return (mapName.Contains("TwinStickExampleMap"));
 }
 
 void AColouringBookGameMode::PostLogin(APlayerController* NewPlayer)
