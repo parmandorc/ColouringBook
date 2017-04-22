@@ -18,6 +18,7 @@ public:
 	AColouringBookGameMode();
 
 	virtual void StartPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void Tick(float DeltaSeconds) override;
 
 	virtual void InitGameState() override;

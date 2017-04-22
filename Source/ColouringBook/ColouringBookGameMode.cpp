@@ -106,6 +106,16 @@ void AColouringBookGameMode::SetHUD()
 	// TO-DO: The client should be informed about the new HUD
 }
 
+void AColouringBookGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	switch (EndPlayReason)
+	{
+	case EEndPlayReason::EndPlayInEditor:
+		SetNewState(ColouringBookGameState::UNDEFINED);
+		break;
+	}
+}
+
 void AColouringBookGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
