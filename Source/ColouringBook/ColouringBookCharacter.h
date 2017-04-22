@@ -13,7 +13,7 @@ class AColouringBookCharacter : public ACharacter
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	uint8 PlayerID;
 
-	/** Offset from the ships location to spawn projectiles */
+	/** Offset from the character location to spawn projectiles */
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector GunOffset;
 
@@ -49,6 +49,10 @@ protected:
 
 	/** Called for side to side input */
 	void MoveRight(float Value);
+
+	/* Function to handle the character being hit by something */
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
 private:
 	/* Flag to control firing  */

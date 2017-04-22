@@ -14,6 +14,7 @@ APuppetEnemyCharacter::APuppetEnemyCharacter()
 	GetMesh()->OnComponentHit.AddDynamic(this, &APuppetEnemyCharacter::OnHit);
 
 	// Defaults
+	GunOffset = FVector(90.0f, 0.0f, 0.0f);
 	InkDropsSpawnAmount = 10;
 	InkDropsSpawnAngleVariance = 15.0f;
 }
@@ -71,4 +72,25 @@ void APuppetEnemyCharacter::OnPreDeath()
 void APuppetEnemyCharacter::OnDeath()
 {
 	Destroy();
+}
+
+void APuppetEnemyCharacter::Fire()
+{
+	const FVector FireDirection = GetActorForwardVector();
+	const FRotator FireRotation = FireDirection.Rotation();
+	// Spawn projectile at an offset from this pawn
+	const FVector SpawnLocation = GetActorLocation() + FireRotation.RotateVector(GunOffset);
+
+	UWorld* const World = GetWorld();
+	if (World != NULL && ProjectileBP != nullptr)
+	{
+		// spawn the projectile
+		World->SpawnActor<AColouringBookProjectile>(ProjectileBP, SpawnLocation, FireRotation);
+	}
+
+	// try and play the sound if specified
+	if (FireSound != nullptr)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, FireSound, GetActorLocation());
+	}
 }

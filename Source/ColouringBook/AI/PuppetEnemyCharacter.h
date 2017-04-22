@@ -11,6 +11,18 @@ class COLOURINGBOOK_API APuppetEnemyCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+	/* Offset from the character location to spawn projectiles */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	FVector GunOffset;
+
+	/* The class to use for spawning bullet in the scene when firing */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AColouringBookProjectile> ProjectileBP;
+
+	/* Sound to play each time we fire */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	class USoundBase* FireSound;
+
 	/* The amount of ink drops to be spawned when shot */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = InkDrops, meta = (AllowPrivateAccess = "true"))
 	int InkDropsSpawnAmount;
@@ -26,6 +38,10 @@ class COLOURINGBOOK_API APuppetEnemyCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	APuppetEnemyCharacter();
+
+	// Fires in the direction the puppet character is facing
+	UFUNCTION(BlueprintCallable, Category = Combat)
+	void Fire();
 
 private:
 	/* Function to handle the character being hit by something */

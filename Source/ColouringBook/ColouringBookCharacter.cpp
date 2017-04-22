@@ -31,6 +31,9 @@ AColouringBookCharacter::AColouringBookCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	// Set up a notification for when this component is hit by something
+	GetMesh()->OnComponentHit.AddDynamic(this, &AColouringBookCharacter::OnHit);
 }
 
 void AColouringBookCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -129,3 +132,14 @@ void AColouringBookCharacter::MoveRight(float Value)
 	}
 }
 
+void AColouringBookCharacter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	AColouringBookProjectile* bullet = nullptr;
+	if ((OtherActor != NULL) && (OtherActor != this) && ((bullet = Cast<AColouringBookProjectile>(OtherActor)) != nullptr))
+	{
+		// Destroy the bullet actor
+		OtherActor->Destroy();
+
+		// TODO: Take damage
+	}
+}
