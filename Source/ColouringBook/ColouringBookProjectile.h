@@ -41,6 +41,7 @@ private:
 	/* Spawns the ink drops from this bullet */
 	void SpawnInkDrops();
 
+
 	/* Sets the number ID of the actor that spawned this actor */
 	uint8 ownerID;
 
@@ -50,9 +51,6 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 	
-	virtual void Tick(float DeltaTime) override;
-
-
 };
 
 

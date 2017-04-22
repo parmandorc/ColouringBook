@@ -65,6 +65,8 @@ void UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions
 
 AColouringBookCanvas::AColouringBookCanvas()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	// Defaults
 	CanvasResolution = 10;
 	MaskDebugModeOn = false;
@@ -76,6 +78,8 @@ AColouringBookCanvas::AColouringBookCanvas()
 void AColouringBookCanvas::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	UE_LOG(LogTemp, Warning, TEXT("CHECKING DTIME"));
 }
 
 void AColouringBookCanvas::PostInitializeComponents()
