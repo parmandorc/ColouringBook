@@ -51,33 +51,30 @@ void AColouringBookGameMode::StartPlay()
 {
 	AGameModeBase::StartPlay();
 
-	if (Role == ROLE_Authority)
+	multiplayerMode = MultiplayerMode::ONLINE; // FIXME: This should probably come from UI
+
+	switch (multiplayerMode)
 	{
-		multiplayerMode = MultiplayerMode::ONLINE; // FIXME: This should probably come from UI
-
-		switch (multiplayerMode)
+	case MultiplayerMode::LOCAL:
+		LocalMultiplayerCreatePlayers();
+		break;
+	case MultiplayerMode::ONLINE:
+		if (s_state == ColouringBookGameState::UNDEFINED)
 		{
-		case MultiplayerMode::LOCAL:
-			LocalMultiplayerCreatePlayers();
-			break;
-		case MultiplayerMode::ONLINE:
-			if (s_state == ColouringBookGameState::UNDEFINED)
+			if (InPlayingMap())
 			{
-				if (InPlayingMap())
-				{
-					// Hack: Do not wait for server start as the map is already the playing map
-					SetNewState(ColouringBookGameState::PLAYING);
-				}
-				else
-				{
-					SetNewState(ColouringBookGameState::WAITING_FOR_TRAVELLING);
-				}
+				// Hack: Do not wait for server start as the map is already the playing map
+				SetNewState(ColouringBookGameState::PLAYING);
 			}
-
-			break;
-		default:
-			break;
+			else
+			{
+				SetNewState(ColouringBookGameState::WAITING_FOR_TRAVELLING);
+			}
 		}
+
+		break;
+	default:
+		break;
 	}
 }
 
@@ -123,18 +120,15 @@ void AColouringBookGameMode::UpdateState(float deltaSeconds)
 	{
 	case ColouringBookGameState::WAITING_FOR_TRAVELLING:
 	{
-		if (Role == ROLE_Authority)
+		// Check for travelling
+		APlayerController* serverPlayerController = GetWorld()->GetFirstPlayerController();
+		if (serverPlayerController && serverPlayerController->IsInputKeyDown(EKeys::S))
 		{
-			// Check for travelling
-			APlayerController* serverPlayerController = GetWorld()->GetFirstPlayerController();
-			if (serverPlayerController && serverPlayerController->IsInputKeyDown(EKeys::S))
-			{
-				SetNewState(ColouringBookGameState::SERVER_TRAVELLING);
+			SetNewState(ColouringBookGameState::SERVER_TRAVELLING);
 
-				FString map = TEXT("/Game/Maps/TwinStickExampleMap");
-				map.Append("?Listen"); // make sure that server will accept connecting clients in the travelled map
-				GetWorld()->ServerTravel(map);
-			}
+			FString map = TEXT("/Game/Maps/TwinStickExampleMap");
+			map.Append("?Listen"); // make sure that server will accept connecting clients in the travelled map
+			GetWorld()->ServerTravel(map);
 		}
 		break;
 	}
@@ -171,11 +165,6 @@ void AColouringBookGameMode::PostLogin(APlayerController* NewPlayer)
 
 void AColouringBookGameMode::SpawnNewPlayer(APlayerController* player)
 {
-	if (Role != ROLE_Authority)
-	{
-		return;
-	}
-
 	// Make sure that the player is spawned at the correct PlayerStart
 	AActor* playerStart = GetPlayerStart(player);
 	if (playerStart)
