@@ -55,6 +55,9 @@ public:
 
 protected:
 
+	void SetNewState(ColouringBookGameState newState);
+	void SetHUD();
+
 	void LocalMultiplayerCreatePlayers();
 
 	void SpawnNewPlayer(APlayerController* player);

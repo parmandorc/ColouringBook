@@ -5,6 +5,8 @@
 #include "ColouringBookCharacter.h"
 #include "ColouringBookPlayerController.h"
 
+#include "NetworkLobbyHUD.h"
+
 
 AColouringBookGameMode::ColouringBookGameState AColouringBookGameMode::s_state = AColouringBookGameMode::ColouringBookGameState::UNDEFINED;
 
@@ -64,18 +66,47 @@ void AColouringBookGameMode::StartPlay()
 				if (InPlayingMap())
 				{
 					// Hack: Do not wait for server start as the map is already the playing map
-					s_state = ColouringBookGameState::PLAYING;
+					SetNewState(ColouringBookGameState::PLAYING);
 				}
 				else
 				{
-					s_state = ColouringBookGameState::WAITING_FOR_TRAVELLING;
+					SetNewState(ColouringBookGameState::WAITING_FOR_TRAVELLING);
 				}
 			}
+
 			break;
 		default:
 			break;
 		}
 	}
+}
+
+void AColouringBookGameMode::SetNewState(ColouringBookGameState newState)
+{
+	if (s_state != newState)
+	{
+		s_state = newState;
+
+		// set new HUD
+		SetHUD();
+	}
+}
+
+void AColouringBookGameMode::SetHUD()
+{
+	switch (s_state)
+	{
+	case ColouringBookGameState::WAITING_FOR_TRAVELLING:
+		HUDClass = ANetworkLobbyHUD::StaticClass();
+		break;
+	default:
+		break;
+	}
+
+	// Set server HUD
+	GetWorld()->GetFirstPlayerController()->ClientSetHUD(HUDClass);
+
+	// TO-DO: The client should be informed about the new HUD
 }
 
 void AColouringBookGameMode::Tick(float DeltaSeconds)
@@ -98,7 +129,7 @@ void AColouringBookGameMode::UpdateState(float deltaSeconds)
 			APlayerController* serverPlayerController = GetWorld()->GetFirstPlayerController();
 			if (serverPlayerController && serverPlayerController->IsInputKeyDown(EKeys::S))
 			{
-				s_state = ColouringBookGameState::SERVER_TRAVELLING;
+				SetNewState(ColouringBookGameState::SERVER_TRAVELLING);
 
 				FString map = TEXT("/Game/Maps/TwinStickExampleMap");
 				map.Append("?Listen"); // make sure that server will accept connecting clients in the travelled map
@@ -113,7 +144,7 @@ void AColouringBookGameMode::UpdateState(float deltaSeconds)
 		bool travellingSucceeded = InPlayingMap();
 		if (travellingSucceeded)
 		{
-			s_state = ColouringBookGameState::PLAYING;
+			SetNewState(ColouringBookGameState::PLAYING);
 		}
 
 		break;
