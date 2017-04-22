@@ -71,11 +71,18 @@ void ADirector::SpawnPuppets()
 		//ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, GetActorLocation(), GetActorRotation());
 
 		ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, PuppetLocation, GetActorRotation());
-		
-		//Debug
-		FString PuppetPosition = *SpawnedPuppet->GetTransform().GetLocation().ToString();
-		UE_LOG(LogTemp, Warning, TEXT("Puppet is at %s"), *PuppetPosition);
-
+		if (SpawnedPuppet)
+		{
+			//Debug
+			FString PuppetPosition = *SpawnedPuppet->GetTransform().GetLocation().ToString();
+			UE_LOG(LogTemp, Warning, TEXT("Puppet is at %s"), *PuppetPosition);
+		}
+		else
+		{
+			//Debug
+			// Could be that the puppet didn´t spawn because there was a collision at the spawn point?
+			UE_LOG(LogTemp, Warning, TEXT("Puppet not spawned")); 
+		}
 	}
 }
 
