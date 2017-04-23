@@ -245,39 +245,32 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 
 void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 {
-	//TODO
-	//loop, get pixels that have color
-	//check neighbor
-		//if neighbor has no color, paint it with pixel color
-
-
-	AColouringBookInkDrop *inkDrop = nullptr;
-	uint8 playerID = inkDrop->GetOwnerID();
-
 	// Initialize the score bitset and counts
 	UWorld *world = GetWorld();
 	AColouringBookGameMode *gameMode = nullptr;
 	if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
 	{
-		scoreBitset.Init(false, gameMode->GetMaxNumPlayers() * canvasTextureWidth * canvasTextureHeight);
-		scoreCounts.Init(0, gameMode->GetMaxNumPlayers());
-	}
-
-
-	// Check whole canvas for colors
-	for (int j = 0; j < canvasTextureHeight; j++)
-	{
-		for (int i = 0; i < canvasTextureWidth; i++)
+		
+		// Check whole canvas for colors
+		for (int j = 0; j < canvasTextureHeight; j++)
 		{
-			int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-			if (scoreBitset[bitIndex + playerID] == false) // Only update score if the player painted a new pixel
+			for (int i = 0; i < canvasTextureWidth; i++)
 			{
-				scoreBitset[bitIndex + playerID] = true;
-				scoreCounts[playerID] += (int)isScore;
+				int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+				if ((scoreBitset[bitIndex + 0] == true && scoreBitset[bitIndex + 1] == false)||(scoreBitset[bitIndex + 0] == false && scoreBitset[bitIndex+1] == true))
+				{
+
+
+				}
+
 			}
-	
 		}
+
+
 	}
+
+
+
 
 
 }
