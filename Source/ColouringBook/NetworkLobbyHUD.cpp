@@ -24,21 +24,34 @@ void ANetworkLobbyHUD::DrawHUD()
 	hudDebugInfo.Append(thisPlayerName);
 	DrawText(hudDebugInfo, FColor::Cyan, 0, 0);
 
-	// draw status info
-	FString statusInfo = isServer ? "Press S to start" : "Waiting for server";
-	DrawText(statusInfo, isServer ? FColor::White : FColor::Red, Canvas->SizeX / 2, Canvas->SizeY / 2);
-
-	// draw players that are connected
-	
-	AGameStateBase* gameState = GetWorld()->GetGameState();
-	if (gameState)
+	AColouringBookGameState* serverState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
+	if (serverState)
 	{
-		for (int i = 0; i < gameState->PlayerArray.Num(); i++)
+		switch (serverState->serverState)
 		{
-			APlayerState* playerState = gameState->PlayerArray[i];
+		case EServerStateEnum::WAITING_FOR_TRAVELLING:
+		{
+			// draw status info
+			FString statusInfo = isServer ? "Press S to start" : "Waiting for server";
+			DrawText(statusInfo, isServer ? FColor::White : FColor::Red, Canvas->SizeX / 2, Canvas->SizeY / 2);
 
-			FString readyPlayer = playerState->GetName() + " ready!";
-			DrawText(readyPlayer, FColor::Green, 50, 50 + i*20);
+			// draw players that are connected
+			AGameStateBase* serverState = GetWorld()->GetGameState();
+			for (int i = 0; i < serverState->PlayerArray.Num(); i++)
+			{
+				APlayerState* playerState = serverState->PlayerArray[i];
+
+				FString readyPlayer = playerState->GetName() + " ready!";
+				DrawText(readyPlayer, FColor::Green, 50, 50 + i * 20);
+			}
+
+			break;
+		}
+		case EServerStateEnum::TRAVELLING:
+		{
+			DrawText("Travelling to map", FColor::White, Canvas->SizeX / 2, Canvas->SizeY / 2);
+			break;
+		}
 		}
 	}
 }

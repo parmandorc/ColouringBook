@@ -2,13 +2,14 @@
 
 #include "ColouringBook.h"
 #include "ColouringBookGameMode.h"
+#include "ColouringBookGameState.h"
 #include "ColouringBookCharacter.h"
 #include "ColouringBookPlayerController.h"
 
 #include "NetworkLobbyHUD.h"
 
 
-AColouringBookGameMode::ColouringBookGameState AColouringBookGameMode::s_state = AColouringBookGameMode::ColouringBookGameState::UNDEFINED;
+EServerStateEnum AColouringBookGameMode::s_serverState = EServerStateEnum::UNDEFINED;
 
 AColouringBookGameMode::AColouringBookGameMode()
 	: multiplayerMode(MultiplayerMode::UNDEFINED)
@@ -31,6 +32,9 @@ AColouringBookGameMode::AColouringBookGameMode()
 		PlayerControllerClass = AColouringBookPlayerController::StaticClass();
 	}
 	
+	// set GameState class
+	GameStateClass = AColouringBookGameState::StaticClass();
+
 	// make sure it replicates
 	bReplicates = true;
 
@@ -59,16 +63,16 @@ void AColouringBookGameMode::StartPlay()
 		LocalMultiplayerCreatePlayers();
 		break;
 	case MultiplayerMode::ONLINE:
-		if (s_state == ColouringBookGameState::UNDEFINED)
+		if (s_serverState == EServerStateEnum::UNDEFINED)
 		{
 			if (InPlayingMap())
 			{
-				// Hack: Do not wait for server start as the map is already the playing map
-				SetNewState(ColouringBookGameState::PLAYING);
+				// Hack: go straight to playing since we are already in the playing map
+				SetServerState(EServerStateEnum::PLAYING);
 			}
 			else
 			{
-				SetNewState(ColouringBookGameState::WAITING_FOR_TRAVELLING);
+				SetServerState(EServerStateEnum::WAITING_FOR_TRAVELLING);
 			}
 		}
 
@@ -78,11 +82,14 @@ void AColouringBookGameMode::StartPlay()
 	}
 }
 
-void AColouringBookGameMode::SetNewState(ColouringBookGameState newState)
+void AColouringBookGameMode::SetServerState(EServerStateEnum newState)
 {
-	if (s_state != newState)
+	if (s_serverState != newState)
 	{
-		s_state = newState;
+		s_serverState = newState;
+
+		AColouringBookGameState* serverState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
+		serverState->serverState = newState;
 
 		// set new HUD
 		SetHUD();
@@ -91,9 +98,10 @@ void AColouringBookGameMode::SetNewState(ColouringBookGameState newState)
 
 void AColouringBookGameMode::SetHUD()
 {
-	switch (s_state)
+	switch (s_serverState)
 	{
-	case ColouringBookGameState::WAITING_FOR_TRAVELLING:
+	case EServerStateEnum::WAITING_FOR_TRAVELLING:
+	case EServerStateEnum::TRAVELLING:
 		HUDClass = ANetworkLobbyHUD::StaticClass();
 		break;
 	default:
@@ -111,7 +119,7 @@ void AColouringBookGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	switch (EndPlayReason)
 	{
 	case EEndPlayReason::EndPlayInEditor:
-		SetNewState(ColouringBookGameState::UNDEFINED);
+		SetServerState(EServerStateEnum::UNDEFINED);
 		break;
 	}
 }
@@ -126,15 +134,15 @@ void AColouringBookGameMode::Tick(float DeltaSeconds)
 
 void AColouringBookGameMode::UpdateState(float deltaSeconds)
 {
-	switch (s_state)
+	switch (s_serverState)
 	{
-	case ColouringBookGameState::WAITING_FOR_TRAVELLING:
+	case EServerStateEnum::WAITING_FOR_TRAVELLING:
 	{
 		// Check for travelling
 		APlayerController* serverPlayerController = GetWorld()->GetFirstPlayerController();
 		if (serverPlayerController && serverPlayerController->IsInputKeyDown(EKeys::S))
 		{
-			SetNewState(ColouringBookGameState::SERVER_TRAVELLING);
+			SetServerState(EServerStateEnum::TRAVELLING);
 
 			FString map = TEXT("/Game/Maps/TwinStickExampleMap");
 			map.Append("?Listen"); // make sure that server will accept connecting clients in the travelled map
@@ -142,18 +150,18 @@ void AColouringBookGameMode::UpdateState(float deltaSeconds)
 		}
 		break;
 	}
-	case ColouringBookGameState::SERVER_TRAVELLING:
+	case EServerStateEnum::TRAVELLING:
 	{
 		// TO-DO: Handle travelling failure
 		bool travellingSucceeded = InPlayingMap();
 		if (travellingSucceeded)
 		{
-			SetNewState(ColouringBookGameState::PLAYING);
+			SetServerState(EServerStateEnum::PLAYING);
 		}
 
 		break;
 	}
-	case ColouringBookGameState::PLAYING:
+	case EServerStateEnum::PLAYING:
 		break;
 	default:
 		break;

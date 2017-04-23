@@ -1,6 +1,8 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 #pragma once
 
+#include "ColouringBookGameState.h"
+
 #include "GameFramework/GameModeBase.h"
 #include "ColouringBookGameMode.generated.h"
 
@@ -43,20 +45,9 @@ public:
 
 	MultiplayerMode GetMultiplayerMode() { return multiplayerMode; }
 
-	enum class ColouringBookGameState
-	{
-		UNDEFINED,
-
-		WAITING_FOR_TRAVELLING,
-		SERVER_TRAVELLING,
-		PLAYING,
-
-		NUM_STATES
-	};
-
 protected:
 
-	void SetNewState(ColouringBookGameState newState);
+	void SetServerState(EServerStateEnum newState);
 	void SetHUD();
 
 	void LocalMultiplayerCreatePlayers();
@@ -75,7 +66,7 @@ private:
 
 	MultiplayerMode multiplayerMode;
 
-	static ColouringBookGameState s_state;
+	static EServerStateEnum s_serverState;
 };
 
 
