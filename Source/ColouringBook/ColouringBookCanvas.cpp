@@ -4,6 +4,7 @@
 #include "ColouringBookCanvas.h"
 #include "ColouringBookInkDrop.h"
 #include "ColouringBookGameMode.h"
+#include "ColouringBookGameState.h"
 
 // Function for enqueueing tasks on the render thread.
 // This is taken from: https://wiki.unrealengine.com/Dynamic_Textures and https://wiki.unrealengine.com/Procedural_Materials
@@ -166,12 +167,11 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 	if ((OtherActor != NULL) && (OtherActor != this) && ((inkDrop = Cast<AColouringBookInkDrop>(OtherActor)) != nullptr))
 	{
 		// Get the color of the player that the ink drop is assigned to
-		UWorld *world = GetWorld();
-		AColouringBookGameMode *gameMode = nullptr;
-		if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr)
-			&& (inkDrop->GetOwnerID() < gameMode->GetMaxNumPlayers()))
+
+		AColouringBookGameState* gameState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
+		if (gameState)
 		{
-			FColor color = gameMode->GetPlayerColor(inkDrop->GetOwnerID());
+			FColor color = gameState->GetPlayerColor(inkDrop->GetOwnerID());
 
 			// Get the relative coordinates of the collision inside the canvas
 			// Note: FTransform::InverseTransformPosition transforms the coordinates from world space to local space.
@@ -211,21 +211,24 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 						}
 
 						// Update score for current player
-						uint8 playerID = inkDrop->GetOwnerID();
-						int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-						if (scoreBitset[bitIndex + playerID] == false) // Only update score if the player painted a new pixel
+						int8 playerIndex = gameState->GetPlayerIndex(inkDrop->GetOwnerID());
+						if (playerIndex >= 0)
 						{
-							scoreBitset[bitIndex + playerID] = true;
-							scoreCounts[playerID] += (int)isScore;
-						}
-
-						// Update score for overwritten player if needed
-						for (int k = 0; k < gameMode->GetMaxNumPlayers(); k++)
-						{
-							if (playerID != k && scoreBitset[bitIndex + k] == true)
+							int bitIndex = (i + j * canvasTextureWidth) * gameState->maxNumPlayers;
+							if (scoreBitset[bitIndex + playerIndex] == false) // Only update score if the player painted a new pixel
 							{
-								scoreBitset[bitIndex + k] = false;
-								scoreCounts[k] -= (int)isScore;
+								scoreBitset[bitIndex + playerIndex] = true;
+								scoreCounts[playerIndex] += (int)isScore;
+							}
+
+							// Update score for overwritten player if needed
+							for (int k = 0; k < gameState->maxNumPlayers; k++)
+							{
+								if (playerIndex != k && scoreBitset[bitIndex + k] == true)
+								{
+									scoreBitset[bitIndex + k] = false;
+									scoreCounts[k] -= (int)isScore;
+								}
 							}
 						}
 					}

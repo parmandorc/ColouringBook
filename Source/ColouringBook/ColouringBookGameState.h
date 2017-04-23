@@ -29,7 +29,11 @@ public:
 	UPROPERTY(Replicated)
 	TEnumAsByte<EServerStateEnum> serverState;
 
+	UPROPERTY(Replicated)
+	int32 maxNumPlayers;
+
 public:
 
 	FColor GetPlayerColor(uint32 playerId);
+	int8 GetPlayerIndex(uint32 playerId);
 };

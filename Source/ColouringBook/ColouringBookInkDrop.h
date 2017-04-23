@@ -39,7 +39,7 @@ public:
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 	/* Returns the number ID of the actor that spawned this actor */
-	FORCEINLINE uint8 GetOwnerID() const { return ownerID; }
+	FORCEINLINE int32 GetOwnerID() const { return ownerID; }
 
 	UFUNCTION()
 	void OnReplicatedOwnerID();

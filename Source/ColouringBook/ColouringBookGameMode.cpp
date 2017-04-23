@@ -53,6 +53,10 @@ void AColouringBookGameMode::InitGameState()
 
 	//  Get all PlayerStart
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), playerStarts);
+
+	// set the maximum number of players
+	AColouringBookGameState* gameState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
+	gameState->maxNumPlayers = GetMaxNumPlayers();
 }
 
 void AColouringBookGameMode::StartPlay()
