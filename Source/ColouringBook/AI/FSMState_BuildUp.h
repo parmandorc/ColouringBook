@@ -18,6 +18,7 @@ public:
 
 	// FSMState interface
 	virtual void OnEnter() override;
+	virtual void Tick(float DeltaTime) override;
 	virtual void OnExit() override;
 
 private:
@@ -29,4 +30,7 @@ private:
 
 	// Function that is called when the spawning timer elapses
 	void SpawnEnemy();
+
+	// The time that this state has been active
+	float lifetime;
 };

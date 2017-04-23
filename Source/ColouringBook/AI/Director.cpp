@@ -13,6 +13,7 @@ ADirector::ADirector()
 	SpawnRadius = 1200.0f;
 	MinSpawnTime = 1.0f;
 	MaxSpawnTime = 3.0f;
+	BuildUpTimeForMaxSpawnRate = 15.0f;
 }
 
 // Called when the game starts or when spawned
@@ -37,7 +38,7 @@ void ADirector::Tick(float DeltaTime)
 	if (stateToTransition == UDirectorFSMState::State::NONE)
 	{
 		// Call the update function for the current state
-		FSMStates[currentState]->Tick();
+		FSMStates[currentState]->Tick(DeltaTime);
 	}
 	else
 	{

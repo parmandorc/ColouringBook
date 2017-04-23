@@ -38,7 +38,7 @@ public:
 	virtual void OnEnter() {}
 
 	// Called every frame while the FSM in this state
-	virtual void Tick() {}
+	virtual void Tick(float DeltaTime) {}
 
 	// Called when transitioning out of this state
 	virtual void OnExit() {}

@@ -26,6 +26,10 @@ class COLOURINGBOOK_API ADirector : public AActor
 	// The maximum amount of time between enemy spawns
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0"))
 	float MaxSpawnTime;
+
+	// The amount of time the director takes to reach maximum spawn rate during build up
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0"))
+	float BuildUpTimeForMaxSpawnRate;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -56,4 +60,6 @@ public:
 	FORCEINLINE float GetMinSpawnTime() { return MinSpawnTime; }
 	// Returns the maximum amount of time between enemy spawns
 	FORCEINLINE float GetMaxSpawnTime() { return MaxSpawnTime; }
+	// Returns the amount of time the director takes to reach maximum spawn rate during build up
+	FORCEINLINE float GetBuildUpTimeForMaxSpawnRate() { return BuildUpTimeForMaxSpawnRate; }
 };
