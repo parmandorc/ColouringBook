@@ -195,39 +195,7 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 					int dj = FMath::Abs<int>(cj - j);
 					if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
 					{
-						// Determine if the painted pixel is inside the painting
-						int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
-						int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
-						bool isScore = maskBitset[mi + mj * maskTextureWidth];
-
-						// Update pixel color
-						if (!MaskDebugModeOn || isScore)
-						{
-							int pixelIndex = (i + j * canvasTextureWidth) * 4;
-							dynamicColors[pixelIndex + 0] = color.B;
-							dynamicColors[pixelIndex + 1] = color.G;
-							dynamicColors[pixelIndex + 2] = color.R;
-							dynamicColors[pixelIndex + 3] = color.A;
-						}
-
-						// Update score for current player
-						uint8 playerID = inkDrop->GetOwnerID();
-						int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-						if (scoreBitset[bitIndex + playerID] == false) // Only update score if the player painted a new pixel
-						{
-							scoreBitset[bitIndex + playerID] = true;
-							scoreCounts[playerID] += (int)isScore;
-						}
-
-						// Update score for overwritten player if needed
-						for (int k = 0; k < gameMode->GetMaxNumPlayers(); k++)
-						{
-							if (playerID != k && scoreBitset[bitIndex + k] == true)
-							{
-								scoreBitset[bitIndex + k] = false;
-								scoreCounts[k] -= (int)isScore;
-							}
-						}
+						ColorPixel(di, dj);
 					}
 				}
 			}
@@ -256,26 +224,54 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 			for (int i = 0; i < canvasTextureWidth; i++)
 			{
 				int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-				if ((scoreBitset[bitIndex + 0] == true|| scoreBitset[bitIndex+1] == true))
+				if ((scoreBitset[bitIndex + 0] == true|| scoreBitset[bitIndex + 1] == true))
 				{
-					for (int j = 0; j < canvasTextureHeight; j++) 
+					//check if the next pixel has color
+					int bitIndexAdjacents = (i + 1 + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					if ((scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)) 
 					{
-						for (int i = 0; i < canvasTextureWidth; i++) 
-						{
-							int pixelIndex = 
-						}
+						//color an adjacent pixel
+						ColorPixel(i, j);
 					}
-
 				}
-
 			}
 		}
+	}
+}
 
 
+void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID)
+{
+	// Determine if the painted pixel is inside the painting
+	int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
+	int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
+	bool isScore = maskBitset[mi + mj * maskTextureWidth];
+
+	// Update pixel color
+	if (!MaskDebugModeOn || isScore)
+	{
+		int pixelIndex = (i + j * canvasTextureWidth) * 4;
+		dynamicColors[pixelIndex + 0] = color.B;
+		dynamicColors[pixelIndex + 1] = color.G;
+		dynamicColors[pixelIndex + 2] = color.R;
+		dynamicColors[pixelIndex + 3] = color.A;
 	}
 
+	// Update score for current player
+	int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+	if (scoreBitset[bitIndex + playerID] == false) // Only update score if the player painted a new pixel
+	{
+		scoreBitset[bitIndex + playerID] = true;
+		scoreCounts[playerID] += (int)isScore;
+	}
 
-
-
-
+	// Update score for overwritten player if needed
+	for (int k = 0; k < gameMode->GetMaxNumPlayers(); k++)
+	{
+		if (playerID != k && scoreBitset[bitIndex + k] == true)
+		{
+			scoreBitset[bitIndex + k] = false;
+			scoreCounts[k] -= (int)isScore;
+		}
+	}
 }
