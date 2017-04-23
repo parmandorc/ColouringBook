@@ -76,14 +76,11 @@ AColouringBookCanvas::AColouringBookCanvas()
 	GetStaticMeshComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCanvas::OnHit);
 }
 
-void AColouringBookCanvas::Tick(float DeltaSeconds)
+void AColouringBookCanvas::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaSeconds);
+	Super::Tick(DeltaTime);
 		
 	DiffuseInk();
-
-	//Debug (TODO Delete)
-	//UE_LOG(LogTemp, Warning, TEXT("CHECKING DTIME"));
 }
 
 void AColouringBookCanvas::PostInitializeComponents()
@@ -243,7 +240,6 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 
 void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID)
 {
-	
 	// Determine if the painted pixel is inside the painting
 	int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
 	int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
@@ -286,7 +282,5 @@ void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID)
 		}
 
 	}
-
-
 
 }
