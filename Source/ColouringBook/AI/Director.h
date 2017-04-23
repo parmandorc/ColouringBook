@@ -14,6 +14,18 @@ class COLOURINGBOOK_API ADirector : public AActor
 	// The class to use for spawning enemies in the scene
 	UPROPERTY(Category = Gameplay, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<ACharacter> EnemyBP;
+
+	// The radius of the circle where to spawn the enemies
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0"))
+	float SpawnRadius;
+
+	// The minimum amount of time between enemy spawns
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0"))
+	float MinSpawnTime;
+
+	// The maximum amount of time between enemy spawns
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0"))
+	float MaxSpawnTime;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -38,4 +50,10 @@ private:
 
 	//helper to generate random position for enemies to spawn
 	FVector GetRandomCirclePosition(FVector center, float radius);
+
+public:
+	// Returns the minimum amount of time between enemy spawns
+	FORCEINLINE float GetMinSpawnTime() { return MinSpawnTime; }
+	// Returns the maximum amount of time between enemy spawns
+	FORCEINLINE float GetMaxSpawnTime() { return MaxSpawnTime; }
 };

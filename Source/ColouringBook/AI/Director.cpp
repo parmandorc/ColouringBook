@@ -8,6 +8,11 @@ ADirector::ADirector()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	// Default values
+	SpawnRadius = 1200.0f;
+	MinSpawnTime = 1.0f;
+	MaxSpawnTime = 3.0f;
 }
 
 // Called when the game starts or when spawned
@@ -42,10 +47,9 @@ void ADirector::Tick(float DeltaTime)
 
 FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
 {
-	float angle = FMath::RandRange(0.0f, 270.0f);
+	float angle = FMath::RandRange(0.0f, 360.0f);
 
 	FVector position;
-
 	position.X = center.X + radius*FMath::Sin(angle*FMath::DegreesToRadians(angle));
 	position.Y = center.Y + radius*FMath::Cos(angle*FMath::DegreesToRadians(angle));
 	position.Z = center.Z;
@@ -60,18 +64,8 @@ void ADirector::SpawnEnemy()
 	UWorld* const World = GetWorld();
 	if (World != nullptr)
 	{
-		FVector center(0.0f, 0.0f, 250.0f);
-		float radius = 1200.0f;
-		FVector PuppetLocation = GetRandomCirclePosition(center, radius);
-
-		ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, PuppetLocation, GetActorRotation());
-		
-		//Debug
-		if (SpawnedPuppet != nullptr)
-		{
-			FString PuppetPosition = *SpawnedPuppet->GetTransform().GetLocation().ToString();
-			UE_LOG(LogTemp, Warning, TEXT("Puppet is at %s"), *PuppetPosition);
-		}
+		FVector PuppetLocation = GetRandomCirclePosition(GetActorLocation(), SpawnRadius);
+		ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, PuppetLocation, (GetActorLocation() - PuppetLocation).ToOrientationRotator());
 	}
 }
 

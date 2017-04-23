@@ -28,7 +28,8 @@ void UFSMState_BuildUp::SetSpawnTimer()
 	UWorld* world = GetOuter()->GetWorld();
 	if (world != nullptr)
 	{
-		world->GetTimerManager().SetTimer(SpawnTimerHandle, this, &UFSMState_BuildUp::SpawnEnemy, FMath::FRandRange(1.0f, 3.0f), false);
+		float timerRate = FMath::FRandRange(director->GetMinSpawnTime(), director->GetMaxSpawnTime());
+		world->GetTimerManager().SetTimer(SpawnTimerHandle, this, &UFSMState_BuildUp::SpawnEnemy, timerRate, false);
 	}
 }
 
