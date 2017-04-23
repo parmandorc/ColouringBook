@@ -250,17 +250,21 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 	AColouringBookGameMode *gameMode = nullptr;
 	if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
 	{
-		
 		// Check whole canvas for colors
 		for (int j = 0; j < canvasTextureHeight; j++)
 		{
 			for (int i = 0; i < canvasTextureWidth; i++)
 			{
 				int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-				if ((scoreBitset[bitIndex + 0] == true && scoreBitset[bitIndex + 1] == false)||
-					(scoreBitset[bitIndex + 0] == false && scoreBitset[bitIndex+1] == true))
+				if ((scoreBitset[bitIndex + 0] == true|| scoreBitset[bitIndex+1] == true))
 				{
-
+					for (int j = 0; j < canvasTextureHeight; j++) 
+					{
+						for (int i = 0; i < canvasTextureWidth; i++) 
+						{
+							int pixelIndex = 
+						}
+					}
 
 				}
 
