@@ -27,6 +27,7 @@ public:
 
 private:
 	/* The number ID of the actor that spawned this actor */
+	UPROPERTY(ReplicatedUsing=OnReplicatedOwnerID)
 	uint32 ownerID;
 
 	/* The dynamic material instance of the ink drop */
@@ -39,4 +40,11 @@ public:
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 	/* Returns the number ID of the actor that spawned this actor */
 	FORCEINLINE uint8 GetOwnerID() const { return ownerID; }
+
+	UFUNCTION()
+	void OnReplicatedOwnerID();
+
+private:
+
+	void SetColor();
 };

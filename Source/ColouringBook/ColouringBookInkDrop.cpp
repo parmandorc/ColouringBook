@@ -3,6 +3,8 @@
 #include "ColouringBookGameMode.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "Net/UnrealNetwork.h"
+
 AColouringBookInkDrop::AColouringBookInkDrop()
 {
 	// Static reference to the mesh to use for the projectile
@@ -38,7 +40,24 @@ void AColouringBookInkDrop::SetOwnerID(uint32 _ownerID)
 {
 	ownerID = _ownerID;
 
-	// Use the color associated with this ID
+	SetColor();
+}
+
+void AColouringBookInkDrop::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AColouringBookInkDrop, ownerID);
+}
+
+void AColouringBookInkDrop::OnReplicatedOwnerID()
+{
+	SetColor();
+}
+
+void AColouringBookInkDrop::SetColor()
+{
+	// Use the color associated with ownerID
 	AColouringBookGameState* gameState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
 	if (gameState)
 	{

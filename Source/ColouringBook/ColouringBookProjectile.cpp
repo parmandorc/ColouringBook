@@ -5,6 +5,8 @@
 #include "ColouringBookInkDrop.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+#include "Net/UnrealNetwork.h"
+
 AColouringBookProjectile::AColouringBookProjectile() 
 {
 	// make sure that replicates
@@ -76,4 +78,11 @@ void AColouringBookProjectile::SpawnInkDrops()
 			inkDrop->SetOwnerID(ownerID);
 		}
 	}
+}
+
+void AColouringBookProjectile::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AColouringBookProjectile, ownerID);
 }

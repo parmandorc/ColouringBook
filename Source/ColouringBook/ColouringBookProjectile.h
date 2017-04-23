@@ -35,14 +35,15 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	void SetOwnerID(uint32 _ownerID) { ownerID = _ownerID; }
+	void SetOwnerID(int32 _ownerID) { ownerID = _ownerID; }
 
 private:
 	/* Spawns the ink drops from this bullet */
 	void SpawnInkDrops();
 
 	/* Sets the number ID of the actor that spawned this actor */
-	uint32 ownerID;
+	UPROPERTY(Replicated)
+	int32 ownerID;
 
 public:
 	/** Returns ProjectileMesh subobject **/
