@@ -49,6 +49,11 @@ FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
 //Called every x seconds with FTimerManager::SetTimer()
 void ADirector::SpawnPuppets()
 {
+	if (Role != ROLE_Authority)
+	{
+		return;
+	}
+
 	//Handle spawning of enemies
 	UWorld* const World = GetWorld();
 
