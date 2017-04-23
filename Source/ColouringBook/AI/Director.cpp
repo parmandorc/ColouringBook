@@ -57,7 +57,7 @@ void ADirector::SpawnPuppets()
 
 	if (World != NULL && !EnemyLimitReached)
 	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADirector::SpawnPuppets, 1.5f, true);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADirector::SpawnPuppets, 3.0f, true);
 
 		EnemiesSpawned++;
 
