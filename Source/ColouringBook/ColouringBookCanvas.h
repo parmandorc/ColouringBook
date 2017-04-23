@@ -29,6 +29,7 @@ class COLOURINGBOOK_API AColouringBookCanvas : public AStaticMeshActor
 	bool MaskDebugModeOn;
 
 public:
+	
 	AColouringBookCanvas();
 
 	// Begin Actor Interface
@@ -39,6 +40,8 @@ public:
 	// Function to handle the canvas being hit by something
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	void DiffuseInk(); //TODO implement
 
 private:
 	// The array of dynamic materials

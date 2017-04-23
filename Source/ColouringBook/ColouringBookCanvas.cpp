@@ -65,6 +65,7 @@ void UpdateTextureRegions(UTexture2D* Texture, int32 MipIndex, uint32 NumRegions
 
 AColouringBookCanvas::AColouringBookCanvas()
 {
+	//Enables Tick for this Actor
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Defaults
@@ -78,8 +79,12 @@ AColouringBookCanvas::AColouringBookCanvas()
 void AColouringBookCanvas::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+	
+	//Call Diffuse function
 
-	UE_LOG(LogTemp, Warning, TEXT("CHECKING DTIME"));
+
+	//Debug (TODO Delete)
+	//UE_LOG(LogTemp, Warning, TEXT("CHECKING DTIME"));
 }
 
 void AColouringBookCanvas::PostInitializeComponents()
@@ -235,4 +240,10 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 		// Destroy ink drop
 		OtherActor->Destroy();
 	}
+}
+
+
+void AColouringBookCanvas::DiffuseInk(/*arguments*/)
+{
+	;
 }
