@@ -8,7 +8,6 @@ ADirector::ADirector()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 }
 
 // Called when the game starts or when spawned
@@ -16,10 +15,12 @@ void ADirector::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//ADirector::CustomSpawningTimer();
-	
-	SpawnPuppets();
+	// Initialize FSM
+	FSMStates = UDirectorFSMState::CreateFSM(this);
+	currentState = UDirectorFSMState::State::BUILD_UP;
+	FSMStates[currentState]->OnEnter();
 
+	SpawnPuppets();
 }
 
 // Called every frame
@@ -27,11 +28,22 @@ void ADirector::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	// Check if the FSM should transition to another state
+	UDirectorFSMState::State stateToTransition = FSMStates[currentState]->CheckForTransitions();
+
+	if (stateToTransition == UDirectorFSMState::State::NONE)
+	{
+		// Call the update function for the current state
+		FSMStates[currentState]->Tick();
+	}
+	else
+	{
+		FSMTransitionTo(stateToTransition);
+	}
 }
 
 FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
 {
-	
 	float angle = FMath::RandRange(0.0f, 270.0f);
 
 	FVector position;
@@ -41,7 +53,6 @@ FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
 	position.Z = center.Z;
 
 	return position;
-
 }
 
 //TODO make enemies not spawn near player
@@ -75,10 +86,12 @@ void ADirector::SpawnPuppets()
 		//Debug
 		FString PuppetPosition = *SpawnedPuppet->GetTransform().GetLocation().ToString();
 		UE_LOG(LogTemp, Warning, TEXT("Puppet is at %s"), *PuppetPosition);
-
 	}
 }
 
-
-
-
+void ADirector::FSMTransitionTo(UDirectorFSMState::State newState)
+{
+	FSMStates[currentState]->OnExit();
+	currentState = newState;
+	FSMStates[currentState]->OnEnter();
+}

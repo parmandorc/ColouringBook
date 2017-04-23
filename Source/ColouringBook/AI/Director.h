@@ -3,6 +3,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "DirectorFSMState.h"
 #include "Director.generated.h"
 
 UCLASS(Blueprintable)
@@ -25,7 +26,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	
+	// The list of states that make up the Finite State Machine
+	TArray<UDirectorFSMState*> FSMStates;
+
+	// The current active state of the FSM
+	UDirectorFSMState::State currentState;
+
+	// Transitions the FSM to a new state
+	void FSMTransitionTo(UDirectorFSMState::State newState);
 
 public:	
 	// Called every frame
@@ -36,6 +44,4 @@ public:
 	
 	//allows custom timing for spawning enemies
 	void SpawnPuppets();
-
-	
 };
