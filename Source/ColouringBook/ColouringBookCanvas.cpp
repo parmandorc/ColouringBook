@@ -156,6 +156,12 @@ void AColouringBookCanvas::PostInitializeComponents()
 
 void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (Role != ROLE_Authority)
+	{
+		// For the moment, only allow the server to process hits
+		return;
+	}
+
 	AColouringBookInkDrop *inkDrop = nullptr;
 	if ((OtherActor != NULL) && (OtherActor != this) && ((inkDrop = Cast<AColouringBookInkDrop>(OtherActor)) != nullptr))
 	{
