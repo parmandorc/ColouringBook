@@ -19,8 +19,6 @@ void ADirector::BeginPlay()
 	FSMStates = UDirectorFSMState::CreateFSM(this);
 	currentState = UDirectorFSMState::State::BUILD_UP;
 	FSMStates[currentState]->OnEnter();
-
-	SpawnPuppets();
 }
 
 // Called every frame
@@ -56,36 +54,24 @@ FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
 }
 
 //TODO make enemies not spawn near player
-
-//Called every x seconds with FTimerManager::SetTimer()
-void ADirector::SpawnPuppets()
+void ADirector::SpawnEnemy()
 {
 	//Handle spawning of enemies
 	UWorld* const World = GetWorld();
-
-	FVector center(0.0f, 0.0f, 250.0f);
-	float radius = 1200.0f;
-	FVector PuppetLocation = GetRandomCirclePosition(center, radius);
-
-	if (World != NULL && !EnemyLimitReached)
+	if (World != nullptr)
 	{
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ADirector::SpawnPuppets, 1.5f, true);
-
-		EnemiesSpawned++;
-
-		//setting limit to spawn enemies. TODO change later or rewrite
-		if (EnemiesSpawned > 15) 
-		{
-			GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
-		}
-		
-		//ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, GetActorLocation(), GetActorRotation());
+		FVector center(0.0f, 0.0f, 250.0f);
+		float radius = 1200.0f;
+		FVector PuppetLocation = GetRandomCirclePosition(center, radius);
 
 		ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, PuppetLocation, GetActorRotation());
 		
 		//Debug
-		FString PuppetPosition = *SpawnedPuppet->GetTransform().GetLocation().ToString();
-		UE_LOG(LogTemp, Warning, TEXT("Puppet is at %s"), *PuppetPosition);
+		if (SpawnedPuppet != nullptr)
+		{
+			FString PuppetPosition = *SpawnedPuppet->GetTransform().GetLocation().ToString();
+			UE_LOG(LogTemp, Warning, TEXT("Puppet is at %s"), *PuppetPosition);
+		}
 	}
 }
 

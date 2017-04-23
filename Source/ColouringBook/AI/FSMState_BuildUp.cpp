@@ -2,6 +2,7 @@
 
 #include "ColouringBook.h"
 #include "FSMState_BuildUp.h"
+#include "Director.h"
 
 UFSMState_BuildUp::UFSMState_BuildUp()
 {
@@ -10,10 +11,30 @@ UFSMState_BuildUp::UFSMState_BuildUp()
 
 void UFSMState_BuildUp::OnEnter()
 {
-	UE_LOG(LogTemp, Log, TEXT("BuildUp State: OnEnter"));
+	SetSpawnTimer();
 }
 
-void UFSMState_BuildUp::Tick()
+void UFSMState_BuildUp::OnExit()
 {
-	UE_LOG(LogTemp, Log, TEXT("BuildUp State: Tick"));
+	UWorld* world = GetWorld();
+	if (world != nullptr)
+	{
+		world->GetTimerManager().ClearTimer(SpawnTimerHandle);
+	}
+}
+
+void UFSMState_BuildUp::SetSpawnTimer()
+{
+	UWorld* world = GetOuter()->GetWorld();
+	if (world != nullptr)
+	{
+		world->GetTimerManager().SetTimer(SpawnTimerHandle, this, &UFSMState_BuildUp::SpawnEnemy, FMath::FRandRange(1.0f, 3.0f), false);
+	}
+}
+
+void UFSMState_BuildUp::SpawnEnemy()
+{
+	director->SpawnEnemy();
+
+	SetSpawnTimer();
 }

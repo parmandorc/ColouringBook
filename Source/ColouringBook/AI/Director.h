@@ -18,14 +18,15 @@ class COLOURINGBOOK_API ADirector : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ADirector();
-	FTimerHandle TimerHandle;
-	int32 EnemiesSpawned = 0;
-	bool EnemyLimitReached = false;
 
-protected:
-	// Called when the game starts or when spawned
+	// AActor interface
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 
+	//allows custom timing for spawning enemies
+	void SpawnEnemy();
+
+private:
 	// The list of states that make up the Finite State Machine
 	TArray<UDirectorFSMState*> FSMStates;
 
@@ -35,13 +36,6 @@ protected:
 	// Transitions the FSM to a new state
 	void FSMTransitionTo(UDirectorFSMState::State newState);
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-	
 	//helper to generate random position for enemies to spawn
 	FVector GetRandomCirclePosition(FVector center, float radius);
-	
-	//allows custom timing for spawning enemies
-	void SpawnPuppets();
 };

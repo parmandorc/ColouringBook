@@ -18,5 +18,15 @@ public:
 
 	// FSMState interface
 	virtual void OnEnter() override;
-	virtual void Tick() override;
+	virtual void OnExit() override;
+
+private:
+	// The timer handle for spawning enemies
+	FTimerHandle SpawnTimerHandle;
+
+	// Sets the timer for calling the director to spawn a new enemy
+	void SetSpawnTimer();
+
+	// Function that is called when the spawning timer elapses
+	void SpawnEnemy();
 };
