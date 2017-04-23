@@ -41,10 +41,10 @@ public:
 	/* Returns the number ID of the actor that spawned this actor */
 	FORCEINLINE int32 GetOwnerID() const { return ownerID; }
 
+private:
+
 	UFUNCTION()
 	void OnReplicatedOwnerID();
-
-private:
 
 	void SetColor();
 };

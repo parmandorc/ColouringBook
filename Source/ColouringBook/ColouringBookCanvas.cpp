@@ -166,81 +166,106 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 	AColouringBookInkDrop *inkDrop = nullptr;
 	if ((OtherActor != NULL) && (OtherActor != this) && ((inkDrop = Cast<AColouringBookInkDrop>(OtherActor)) != nullptr))
 	{
-		// Get the color of the player that the ink drop is assigned to
-
 		AColouringBookGameState* gameState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
-		if (gameState)
+		
+		// Get the color of the player that the ink drop is assigned to
+		FColor color = gameState->GetPlayerColor(inkDrop->GetOwnerID());
+
+		// Get the relative coordinates of the collision inside the canvas
+		// Note: FTransform::InverseTransformPosition transforms the coordinates from world space to local space.
+		//		Local space is given in the range [-50, 50], and we need coordinates in [0, 1].
+		FVector localCoords = (GetTransform().InverseTransformPosition(Hit.ImpactPoint) + 50.0f) * 0.01f;
+
+		// Get texture coordinates of the centre of the circle and its radius
+		int ci = localCoords.X * (canvasTextureWidth - 1);
+		int cj = localCoords.Y * (canvasTextureHeight - 1);
+		static const float SQRT3_INV = 1.0f / FMath::Sqrt(3);
+		float radius = OtherActor->GetComponentsBoundingBox().GetSize().Size() * SQRT3_INV * 0.5f; // world space
+		radius = GetTransform().InverseTransformVector(GetActorForwardVector() * radius).Size() * 0.01f; // local space
+		int r = FMath::RoundToInt(radius * canvasTextureWidth);
+
+		// Paint the pixels of the circle
+		for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, canvasTextureHeight - 1); j++)
 		{
-			FColor color = gameState->GetPlayerColor(inkDrop->GetOwnerID());
-
-			// Get the relative coordinates of the collision inside the canvas
-			// Note: FTransform::InverseTransformPosition transforms the coordinates from world space to local space.
-			//		Local space is given in the range [-50, 50], and we need coordinates in [0, 1].
-			FVector localCoords = (GetTransform().InverseTransformPosition(Hit.ImpactPoint) + 50.0f) * 0.01f;
-
-			// Get texture coordinates of the centre of the circle and its radius
-			int ci = localCoords.X * (canvasTextureWidth - 1);
-			int cj = localCoords.Y * (canvasTextureHeight - 1);
-			static const float SQRT3_INV = 1.0f / FMath::Sqrt(3);
-			float radius = OtherActor->GetComponentsBoundingBox().GetSize().Size() * SQRT3_INV * 0.5f; // world space
-			radius = GetTransform().InverseTransformVector(GetActorForwardVector() * radius).Size() * 0.01f; // local space
-			int r = FMath::RoundToInt(radius * canvasTextureWidth);
-
-			// Paint the pixels of the circle
-			for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, canvasTextureHeight - 1); j++)
+			for (int i = FMath::Max<int>(ci - r, 0); i <= FMath::Min<int>(ci + r, canvasTextureWidth - 1); i++)
 			{
-				for (int i = FMath::Max<int>(ci - r, 0); i <= FMath::Min<int>(ci + r, canvasTextureWidth - 1); i++)
+				int di = FMath::Abs<int>(ci - i);
+				int dj = FMath::Abs<int>(cj - j);
+				if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
 				{
-					int di = FMath::Abs<int>(ci - i);
-					int dj = FMath::Abs<int>(cj - j);
-					if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
-					{
-						// Determine if the painted pixel is inside the painting
-						int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
-						int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
-						bool isScore = maskBitset[mi + mj * maskTextureWidth];
+					// Determine if the painted pixel is inside the painting
+					int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
+					int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
+					bool isScore = maskBitset[mi + mj * maskTextureWidth];
 
-						// Update pixel color
-						if (!MaskDebugModeOn || isScore)
+					// Update score for current player
+					int8 playerIndex = gameState->GetPlayerIndex(inkDrop->GetOwnerID());
+					if (playerIndex >= 0)
+					{
+						int bitIndex = (i + j * canvasTextureWidth) * gameState->maxNumPlayers;
+						if (scoreBitset[bitIndex + playerIndex] == false) // Only update score if the player painted a new pixel
 						{
-							int pixelIndex = (i + j * canvasTextureWidth) * 4;
-							dynamicColors[pixelIndex + 0] = color.B;
-							dynamicColors[pixelIndex + 1] = color.G;
-							dynamicColors[pixelIndex + 2] = color.R;
-							dynamicColors[pixelIndex + 3] = color.A;
+							scoreBitset[bitIndex + playerIndex] = true;
+							scoreCounts[playerIndex] += (int)isScore;
 						}
 
-						// Update score for current player
-						int8 playerIndex = gameState->GetPlayerIndex(inkDrop->GetOwnerID());
-						if (playerIndex >= 0)
+						// Update score for overwritten player if needed
+						for (int k = 0; k < gameState->maxNumPlayers; k++)
 						{
-							int bitIndex = (i + j * canvasTextureWidth) * gameState->maxNumPlayers;
-							if (scoreBitset[bitIndex + playerIndex] == false) // Only update score if the player painted a new pixel
+							if (playerIndex != k && scoreBitset[bitIndex + k] == true)
 							{
-								scoreBitset[bitIndex + playerIndex] = true;
-								scoreCounts[playerIndex] += (int)isScore;
-							}
-
-							// Update score for overwritten player if needed
-							for (int k = 0; k < gameState->maxNumPlayers; k++)
-							{
-								if (playerIndex != k && scoreBitset[bitIndex + k] == true)
-								{
-									scoreBitset[bitIndex + k] = false;
-									scoreCounts[k] -= (int)isScore;
-								}
+								scoreBitset[bitIndex + k] = false;
+								scoreCounts[k] -= (int)isScore;
 							}
 						}
 					}
 				}
 			}
 
-			// Update texture and assign it to material
-			UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
-			dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
+			// Multicast to paint the canvas
+			MulticastPaintCanvas(localCoords, color, r);
 		}
 
 		// Destroy ink drop
 		OtherActor->Destroy();
 	}
+}
+
+void AColouringBookCanvas::MulticastPaintCanvas_Implementation(FVector localCoords, FColor color, int radius)
+{
+	// Get texture coordinates of the centre of the circle and its radius
+	int ci = localCoords.X * (canvasTextureWidth - 1);
+	int cj = localCoords.Y * (canvasTextureHeight - 1);
+	int r = radius;
+
+	// Paint the pixels of the circle
+	for (int j = FMath::Max<int>(cj - r, 0); j <= FMath::Min(cj + r, canvasTextureHeight - 1); j++)
+	{
+		for (int i = FMath::Max<int>(ci - r, 0); i <= FMath::Min<int>(ci + r, canvasTextureWidth - 1); i++)
+		{
+			int di = FMath::Abs<int>(ci - i);
+			int dj = FMath::Abs<int>(cj - j);
+			if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
+			{
+				// Determine if the painted pixel is inside the painting
+				int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
+				int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
+				bool isScore = maskBitset[mi + mj * maskTextureWidth];
+
+				// Update pixel color
+				if (!MaskDebugModeOn || isScore)
+				{
+					int pixelIndex = (i + j * canvasTextureWidth) * 4;
+					dynamicColors[pixelIndex + 0] = color.B;
+					dynamicColors[pixelIndex + 1] = color.G;
+					dynamicColors[pixelIndex + 2] = color.R;
+					dynamicColors[pixelIndex + 3] = color.A;
+				}
+			}
+		}
+	}
+
+	// Update texture and assign it to material
+	UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
+	dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
 }
