@@ -34,15 +34,15 @@ AColouringBookInkDrop::AColouringBookInkDrop()
 	bReplicates = true;
 }
 
-void AColouringBookInkDrop::SetOwnerID(uint8 _ownerID)
+void AColouringBookInkDrop::SetOwnerID(uint32 _ownerID)
 {
 	ownerID = _ownerID;
 
 	// Use the color associated with this ID
-	UWorld *world = GetWorld();
-	AColouringBookGameMode *gameMode = nullptr;
-	if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
+	AColouringBookGameState* gameState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
+	if (gameState)
 	{
-		dynamicMaterial->SetVectorParameterValue("DiffuseColor", gameMode->GetPlayerColor(ownerID));
+		FColor color = gameState->GetPlayerColor(ownerID);
+		dynamicMaterial->SetVectorParameterValue("DiffuseColor", color);
 	}
 }

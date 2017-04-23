@@ -28,7 +28,7 @@ public:
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 	
 	/* Returns the color that is associated with a player ID */
-	FORCEINLINE FColor GetPlayerColor(uint8 playerIndex) const { return (playerIndex < playerColors.Num()) ? playerColors[playerIndex] : FColor::White; }
+	FORCEINLINE FColor GetPlayerColor(uint8 playerIndex) const { return (playerIndex < playerColors.Num()) ? playerColors[playerIndex] : FColor::Black; }
 
 	/* Returns the maximum number of players in the game */
 	FORCEINLINE int32 GetMaxNumPlayers() const { return playerColors.Num(); }
@@ -55,6 +55,7 @@ protected:
 	void SpawnNewPlayer(APlayerController* player);
 
 	AActor* GetPlayerStart(AController* Player);
+	FColor GetPlayerColor(AController* Player);
 
 	void UpdateState(float deltaSeconds);
 

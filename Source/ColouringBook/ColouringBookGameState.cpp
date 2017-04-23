@@ -2,6 +2,7 @@
 
 #include "ColouringBook.h"
 #include "ColouringBookGameState.h"
+#include "ColouringBookPlayerState.h"
 
 #include "Net/UnrealNetwork.h"
 
@@ -17,5 +18,21 @@ void AColouringBookGameState::GetLifetimeReplicatedProps(TArray<FLifetimePropert
 	DOREPLIFETIME(AColouringBookGameState, serverState);
 }
 
+FColor AColouringBookGameState::GetPlayerColor(uint32 playerId)
+{
+	FColor color = FColor::Black;
+
+	for (auto player : PlayerArray)
+	{
+		if (player->PlayerId == playerId)
+		{
+			AColouringBookPlayerState* playerState = Cast<AColouringBookPlayerState>(player);
+			color = playerState->color;
+			break;
+		}
+	}
+
+	return color;
+}
 
 

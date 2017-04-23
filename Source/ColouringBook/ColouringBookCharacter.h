@@ -9,10 +9,6 @@ class AColouringBookCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
-	/* The number to identify this player */
-	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	uint8 PlayerID;
-
 	/** Offset from the ships location to spawn projectiles */
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector GunOffset;
@@ -49,9 +45,6 @@ public:
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
 
-	/* Returns the number that identifies this player */
-	FORCEINLINE uint8 GetPlayerID() { return PlayerID; }
-
 protected:
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
@@ -66,12 +59,12 @@ private:
 
 	// FireShot done by the server
 	UFUNCTION(Server, Reliable, WithValidation)
-	void ServerFireShot(FVector fireLocation, FRotator fireRotator);
+	void ServerFireShot(int32 playerId, FVector fireLocation, FRotator fireRotator);
 
 	// Called by the server to inform all the clients that a player fired
 	UFUNCTION(NetMulticast, unreliable)
 	void MulticastPlayerFired();
 
-	class AColouringBookProjectile* SpawnProjectile(FVector fireLocation, FRotator fireRotator);
+	class AColouringBookProjectile* SpawnProjectile(int32 playerId, FVector fireLocation, FRotator fireRotator);
 };
 

@@ -119,7 +119,7 @@ void AColouringBookCharacter::FireShot(FVector FireDirection)
 bool AColouringBookCharacter::LocalFireShot(FVector fireLocation, FRotator fireRotator)
 {
 	// spawn projectile
-	SpawnProjectile(fireLocation, fireRotator);
+	SpawnProjectile(GetController()->PlayerState->PlayerId, fireLocation, fireRotator);
 
 	// try and play the sound if specified
 	if (FireSound != nullptr)
@@ -141,21 +141,23 @@ bool AColouringBookCharacter::OnlineFireShot(FVector fireLocation, FRotator fire
 	// TO-DO: Add here any visual firing effect if needed
 
 	// Notify the server
-	ServerFireShot(fireLocation, fireRotator);
+	APlayerController* playerController = GetWorld()->GetFirstPlayerController();
+	int32 netPlayerId = playerController->PlayerState->PlayerId;
+	ServerFireShot(netPlayerId, fireLocation, fireRotator);
 
 	return true;
 }
 
-bool AColouringBookCharacter::ServerFireShot_Validate(FVector fireLocation, FRotator fireRotator)
+bool AColouringBookCharacter::ServerFireShot_Validate(int32 playerId, FVector fireLocation, FRotator fireRotator)
 {	
 	// TO-DO: proper validation, anti-cheating measures, etc.
 	return true;
 }
 
-void AColouringBookCharacter::ServerFireShot_Implementation(FVector fireLocation, FRotator fireRotator)
+void AColouringBookCharacter::ServerFireShot_Implementation(int32 playerId, FVector fireLocation, FRotator fireRotator)
 {
 	// TO-DO: replicate, etc.
-	AColouringBookProjectile* projectile = SpawnProjectile(fireLocation, fireRotator);
+	AColouringBookProjectile* projectile = SpawnProjectile(playerId, fireLocation, fireRotator);
 
 	// Notify all clients that a player fired
 	MulticastPlayerFired();
@@ -187,7 +189,7 @@ void AColouringBookCharacter::MoveRight(float Value)
 	}
 }
 
-AColouringBookProjectile* AColouringBookCharacter::SpawnProjectile(FVector fireLocation, FRotator fireRotator)
+AColouringBookProjectile* AColouringBookCharacter::SpawnProjectile(int32 playerId, FVector fireLocation, FRotator fireRotator)
 {
 	AColouringBookProjectile* projectile = nullptr;
 	UWorld* const World = GetWorld();
@@ -195,8 +197,8 @@ AColouringBookProjectile* AColouringBookCharacter::SpawnProjectile(FVector fireL
 	if (Role == ROLE_Authority && World != NULL)
 	{
 		// spawn the projectile
-		projectile = World->SpawnActor<AColouringBookProjectile>(fireLocation, fireRotator);
-		projectile->SetOwnerID(PlayerID);
+		projectile = GetWorld()->SpawnActor<AColouringBookProjectile>(fireLocation, fireRotator);
+		projectile->SetOwnerID(playerId);
 	}
 
 	return projectile;

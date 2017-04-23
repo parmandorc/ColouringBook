@@ -40,6 +40,12 @@ AColouringBookProjectile::AColouringBookProjectile()
 
 void AColouringBookProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (Role != ROLE_Authority)
+	{
+		// For the moment, only allow the server to process hits
+		return;
+	}
+
 	// Only add impulse and destroy projectile if we hit a physics
 	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
 	{

@@ -5,6 +5,7 @@
 #include "ColouringBookGameState.h"
 #include "ColouringBookCharacter.h"
 #include "ColouringBookPlayerController.h"
+#include "ColouringBookPlayerState.h"
 
 #include "NetworkLobbyHUD.h"
 
@@ -34,6 +35,9 @@ AColouringBookGameMode::AColouringBookGameMode()
 	
 	// set GameState class
 	GameStateClass = AColouringBookGameState::StaticClass();
+
+	// set PlayerState class
+	PlayerStateClass = AColouringBookPlayerState::StaticClass();
 
 	// make sure it replicates
 	bReplicates = true;
@@ -192,6 +196,10 @@ void AColouringBookGameMode::SpawnNewPlayer(APlayerController* player)
 		AColouringBookCharacter* character = Cast<AColouringBookCharacter>(player->GetCharacter());
 		character->SetActorLocation(location);
 	}
+
+	// set the player state for this new player
+	AColouringBookPlayerState* playerState = Cast<AColouringBookPlayerState>(player->PlayerState); 
+	playerState->color = GetPlayerColor(player);
 }
 
 AActor* AColouringBookGameMode::GetPlayerStart(AController* Player)
@@ -211,6 +219,12 @@ AActor* AColouringBookGameMode::GetPlayerStart(AController* Player)
 	}
 
 	return nullptr;
+}
+
+FColor AColouringBookGameMode::GetPlayerColor(AController* Player)
+{
+	int8 colorIndex = GetNumPlayers() - 1;
+	return GetPlayerColor(colorIndex);
 }
 
 void AColouringBookGameMode::LocalMultiplayerCreatePlayers()

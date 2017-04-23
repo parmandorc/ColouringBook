@@ -28,5 +28,8 @@ public:
 
 	UPROPERTY(Replicated)
 	TEnumAsByte<EServerStateEnum> serverState;
-	
+
+public:
+
+	FColor GetPlayerColor(uint32 playerId);
 };
