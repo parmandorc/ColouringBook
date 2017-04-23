@@ -79,9 +79,8 @@ AColouringBookCanvas::AColouringBookCanvas()
 void AColouringBookCanvas::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
-	//Call Diffuse function
-	//DiffuseInk();
+		
+	DiffuseInk();
 
 	//Debug (TODO Delete)
 	//UE_LOG(LogTemp, Warning, TEXT("CHECKING DTIME"));
