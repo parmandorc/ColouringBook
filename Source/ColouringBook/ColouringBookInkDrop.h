@@ -26,7 +26,8 @@ public:
 	void SetOwnerID(uint32 _ownerID);
 
 private:
-	/* The number ID of the actor that spawned this actor */
+
+	/* The number ID of the player that owns this actor */
 	UPROPERTY(ReplicatedUsing=OnReplicatedOwnerID)
 	uint32 ownerID;
 
@@ -38,7 +39,8 @@ public:
 	FORCEINLINE UStaticMeshComponent* GetInkDropMesh() const { return InkDropMesh; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
-	/* Returns the number ID of the actor that spawned this actor */
+
+	/* Returns the number ID of the player that owns this actor */
 	FORCEINLINE int32 GetOwnerID() const { return ownerID; }
 
 private:

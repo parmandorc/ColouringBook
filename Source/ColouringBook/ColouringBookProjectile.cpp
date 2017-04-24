@@ -4,8 +4,12 @@
 #include "ColouringBookProjectile.h"
 #include "ColouringBookInkDrop.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-
 #include "Net/UnrealNetwork.h"
+
+
+// Defaults
+static const int InkDropsSpawnAmount = 10;
+static const float InkDropsSpawnAngleVariance = 15.0f;
 
 AColouringBookProjectile::AColouringBookProjectile() 
 {
@@ -20,7 +24,6 @@ AColouringBookProjectile::AColouringBookProjectile()
 	ProjectileMesh->SetStaticMesh(ProjectileMeshAsset.Object);
 	ProjectileMesh->SetupAttachment(RootComponent);
 	ProjectileMesh->BodyInstance.SetCollisionProfileName("Projectile");
-	ProjectileMesh->OnComponentHit.AddDynamic(this, &AColouringBookProjectile::OnHit);		// set up a notification for when this component hits something
 	RootComponent = ProjectileMesh;
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
@@ -34,10 +37,6 @@ AColouringBookProjectile::AColouringBookProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
-
-	// Defaults
-	InkDropsSpawnAmount = 10;
-	InkDropsSpawnAngleVariance = 15.0f;
 }
 
 void AColouringBookProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
