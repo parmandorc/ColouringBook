@@ -238,7 +238,7 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 					if ((i+1 < canvasTextureWidth) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
-						/*ColorPixel(i+1, j, playerID);*/
+						
 						IPixelsToDiffuse.Add(i + 1);
 						JPixelsToDiffuse.Add(j);
 						PlayerIDS.Add(playerID);
@@ -251,7 +251,7 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 					if ((i - 1 >= 0)&& scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
-						//ColorPixel(i - 1, j, playerID);
+						
 						IPixelsToDiffuse.Add(i - 1);
 						JPixelsToDiffuse.Add(j);
 						PlayerIDS.Add(playerID);
@@ -263,7 +263,7 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 					if ((j+1 < canvasTextureHeight) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
-						/*ColorPixel(i, j+1, playerID);*/
+						
 						IPixelsToDiffuse.Add(i);
 						JPixelsToDiffuse.Add(j+1);
 						PlayerIDS.Add(playerID);
@@ -275,7 +275,7 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 					if ((j - 1 >= 0) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
-						//ColorPixel(i, j-1, playerID);
+				
 						IPixelsToDiffuse.Add(i);
 						JPixelsToDiffuse.Add(j - 1);
 						PlayerIDS.Add(playerID);
