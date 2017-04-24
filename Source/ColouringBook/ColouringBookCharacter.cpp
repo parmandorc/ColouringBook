@@ -39,6 +39,7 @@ AColouringBookCharacter::AColouringBookCharacter()
 	IntensityTrackerComponent = CreateDefaultSubobject<UIntensityTracker>("IntensityTracker");
 }
 
+
 void AColouringBookCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	check(PlayerInputComponent);
@@ -78,6 +79,7 @@ void AColouringBookCharacter::Tick(float DeltaSeconds)
 
 	// Try and fire a shot
 	FireShot(FireDirection);
+
 }
 
 void AColouringBookCharacter::FireShot(FVector FireDirection)

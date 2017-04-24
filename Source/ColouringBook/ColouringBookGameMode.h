@@ -23,12 +23,19 @@ public:
 	virtual bool ShouldSpawnAtStartSpot(AController* Player) { return false; }
 	virtual AActor* ChoosePlayerStart_Implementation(AController* Player);
 	
+	float GetRunTime(); 
+	UFUNCTION()
+	virtual void Tick(float DeltaSeconds) override;
+
 
 protected:
 
 	void CreatePlayers(int numPlayers);
 
 	TArray<AActor*> playerStarts;
+
+	UPROPERTY()
+	float RunTime;
 
 public:
 	/* Returns the color that is associated with a player ID */

@@ -32,8 +32,9 @@ class AColouringBookCharacter : public ACharacter
 
 public:
 	AColouringBookCharacter();
-
+	
 	// Begin Actor Interface
+	UFUNCTION()
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	// End Actor Interface

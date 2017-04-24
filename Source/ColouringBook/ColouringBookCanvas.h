@@ -55,6 +55,9 @@ public:
 	//Function that actually colors pixels
 	void ColorPixel(int i, int j, uint8 playerID, uint8 alphaValue = 255);
 
+	//get the score for HUD
+	uint32 GetScore();
+
 private:
 	// The array of dynamic materials
 	TArray<class UMaterialInstanceDynamic*> dynamicMaterials;

@@ -3,9 +3,13 @@
 #include "ColouringBook.h"
 #include "ColouringBookGameMode.h"
 #include "ColouringBookCharacter.h"
+#include "ColouringBook_HUD.h"
 
 AColouringBookGameMode::AColouringBookGameMode()
 {
+	HUDClass = AColouringBook_HUD::StaticClass();
+
+
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Blueprints/ColouringBookCharacter"));
 	if (PlayerPawnBPClass.Class != NULL)
@@ -65,5 +69,17 @@ AActor* AColouringBookGameMode::ChoosePlayerStart_Implementation(AController* Pl
 	}
 
 	return nullptr;
+}
+
+float AColouringBookGameMode::GetRunTime()
+{
+	return RunTime;
+}
+
+void AColouringBookGameMode::Tick(float DeltaSeconds)
+{
+
+	RunTime += DeltaSeconds;
+
 }
 

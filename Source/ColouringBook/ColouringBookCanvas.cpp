@@ -342,3 +342,8 @@ void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, uint8 alphaV
 		}
 	}
 }
+
+uint32 AColouringBookCanvas::GetScore()
+{
+	return; /*score;*/
+}
