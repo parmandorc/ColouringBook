@@ -85,6 +85,6 @@ private:
 	uint32 maxScore;
 
 	// Called by the server to inform all the clients to pain the canvas
-	UFUNCTION(NetMulticast, Reliable)
+	//UFUNCTION(NetMulticast, Reliable)
 	void MulticastPaintCanvas(FVector localCoords, FColor color, int radius);
 };

@@ -69,4 +69,7 @@ private:
 	// Called by the server to inform all the clients that an enemy fired
 	UFUNCTION(NetMulticast, unreliable)
 	void MulticastFired();
+
+	UFUNCTION(NetMulticast, unreliable)
+	void MulticastSpawnInkDrops(int32 ownerId, FVector SpawnLocation, FRotator FireRotation);
 };

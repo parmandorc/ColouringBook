@@ -54,24 +54,24 @@ void APuppetEnemyCharacter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherAct
 
 void APuppetEnemyCharacter::SpawnInkDrops(AColouringBookProjectile* bullet)
 {
-	const FRotator fireRotation = bullet->GetActorRotation();
+	// Multicast SpawnInkDrops
 	const FVector spawnLocation = bullet->GetActorLocation();
+	const FRotator fireRotation = bullet->GetActorRotation();
+	int32 ownerId = bullet->GetOwnerID();
+	MulticastSpawnInkDrops(ownerId, spawnLocation, fireRotation);
+}
 
-	UWorld* const World = GetWorld();
-	if (World != NULL)
+void APuppetEnemyCharacter::MulticastSpawnInkDrops_Implementation(int32 ownerId, FVector spawnLocation, FRotator fireRotation)
+{
+	for (int i = 0; i < InkDropsSpawnAmount; i++)
 	{
-		for (int i = 0; i < InkDropsSpawnAmount; i++)
-		{
-			// spawn the actor
-			const FRotator randomRotation = FRotator::MakeFromEuler(FVector(0.0f,
-				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance),
-				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
-			AColouringBookInkDrop *inkDrop = World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
-			inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
-
-			int32 ownerId = bullet->GetOwnerID();
-			inkDrop->SetOwnerID(ownerId);
-		}
+		// spawn the actor
+		const FRotator randomRotation = FRotator::MakeFromEuler(FVector(0.0f,
+			FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance),
+			FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
+		AColouringBookInkDrop *inkDrop = GetWorld()->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
+		inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
+		inkDrop->SetOwnerID(ownerId);
 	}
 }
 
