@@ -219,6 +219,7 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 		TArray<uint8> PlayerIDS;
 		TArray<uint8> AlphaValues;
 		float alphaVariation = 0.99f;
+		float alphaLimit = 0.9f;
 
 		// Check whole canvas for colors
 		for (int j = 0; j < canvasTextureHeight; j++)
@@ -228,7 +229,7 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 				int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
 				int pixelIndex = (i + j * canvasTextureWidth) * 4;
 				uint8 newAlphaValue = FMath::RoundToInt(dynamicColors[pixelIndex + 3] * alphaVariation);
-				if ((scoreBitset[bitIndex + 0] == true|| scoreBitset[bitIndex + 1] == true))
+				if ((newAlphaValue > alphaLimit*255)&&(scoreBitset[bitIndex + 0] == true|| scoreBitset[bitIndex + 1] == true))
 				{
 					uint8 playerID = (scoreBitset[bitIndex + 0]) ? 0 : 1;
 					
