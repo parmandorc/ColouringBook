@@ -21,6 +21,12 @@ APuppetEnemyCharacter::APuppetEnemyCharacter()
 
 void APuppetEnemyCharacter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (Role != ROLE_Authority)
+	{
+		// for the moment only allow players to proccess hits
+		return;
+	}
+
 	AColouringBookProjectile* bullet = nullptr;
 	if ((OtherActor != NULL) && (OtherActor != this) && ((bullet = Cast<AColouringBookProjectile>(OtherActor)) != nullptr))
 	{
@@ -68,9 +74,15 @@ void APuppetEnemyCharacter::OnPreDeath(AColouringBookCharacter* player)
 {
 	SetActorEnableCollision(false); // So an enemy can not be shot after dead and spawn ink drops more that once
 
-	player->OnEnemyHit(this); // Callback event to the player that killed this enemy
+	if (player)
+	{
+		player->OnEnemyHit(this); // Callback event to the player that killed this enemy
+	}
 
-	director->OnEnemyDeath(this); // Callback event to the director
+	if (director)
+	{
+		director->OnEnemyDeath(this); // Callback event to the director
+	}
 }
 
 void APuppetEnemyCharacter::OnDeath()
