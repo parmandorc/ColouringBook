@@ -53,7 +53,7 @@ public:
 	void DiffuseInk(); 
 	
 	//Function that actually colors pixels
-	void ColorPixel(int i, int j, uint8 playerID, uint8 alphaValue = 255);
+	void ColorPixel(int i, int j, uint8 playerID, FColor color, uint8 alphaValue = 255);
 
 private:
 	// The array of dynamic materials

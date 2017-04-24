@@ -37,6 +37,18 @@ FColor AColouringBookGameState::GetPlayerColor(uint32 playerId)
 	return color;
 }
 
+FColor AColouringBookGameState::GetPlayerColorByIndex(uint8 playerIndex)
+{
+	FColor color = FColor::Black;
+	if (playerIndex < PlayerArray.Num())
+	{
+		AColouringBookPlayerState* playerState = Cast<AColouringBookPlayerState>(PlayerArray[playerIndex]);
+		color = playerState->color;
+	}
+
+	return color;
+}
+
 int8 AColouringBookGameState::GetPlayerIndex(uint32 playerId)
 {
 	int8 index = -1;

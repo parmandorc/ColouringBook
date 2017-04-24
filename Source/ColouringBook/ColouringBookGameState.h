@@ -35,5 +35,6 @@ public:
 public:
 
 	FColor GetPlayerColor(uint32 playerId);
+	FColor GetPlayerColorByIndex(uint8 playerIndex);
 	int8 GetPlayerIndex(uint32 playerId);
 };

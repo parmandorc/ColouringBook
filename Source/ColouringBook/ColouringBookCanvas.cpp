@@ -281,86 +281,84 @@ void AColouringBookCanvas::MulticastPaintCanvas_Implementation(FVector localCoor
 
 void AColouringBookCanvas::DiffuseInk()
 {
-	// Initialize the score bitset and counts
 	UWorld *world = GetWorld();
-	AColouringBookGameMode *gameMode = nullptr;
-	if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
+	AColouringBookGameState* gameState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
+
+	// Initialize the score bitset and counts
+	TArray<int> IPixelsToDiffuse;
+	TArray<int> JPixelsToDiffuse;
+	TArray<uint8> PlayerIndexes;
+	TArray<uint8> AlphaValues;
+
+	// Check whole canvas for colors
+	for (int j = 0; j < canvasTextureHeight; j++)
 	{
-		TArray<int> IPixelsToDiffuse;
-		TArray<int> JPixelsToDiffuse;
-		TArray<uint8> PlayerIDS;
-		TArray<uint8> AlphaValues;
-
-		// Check whole canvas for colors
-		for (int j = 0; j < canvasTextureHeight; j++)
+		for (int i = 0; i < canvasTextureWidth; i++)
 		{
-			for (int i = 0; i < canvasTextureWidth; i++)
+			int bitIndex = (i + j * canvasTextureWidth) * gameState->maxNumPlayers;
+			int pixelIndex = (i + j * canvasTextureWidth) * 4;
+			uint8 newAlphaValue = FMath::RoundToInt(dynamicColors[pixelIndex + 3] * alphaVariation);
+			if ((newAlphaValue > alphaLimit*255)&&(scoreBitset[bitIndex + 0] == true|| scoreBitset[bitIndex + 1] == true))
 			{
-				int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-				int pixelIndex = (i + j * canvasTextureWidth) * 4;
-				uint8 newAlphaValue = FMath::RoundToInt(dynamicColors[pixelIndex + 3] * alphaVariation);
-				if ((newAlphaValue > alphaLimit*255)&&(scoreBitset[bitIndex + 0] == true|| scoreBitset[bitIndex + 1] == true))
-				{
-					uint8 playerID = (scoreBitset[bitIndex + 0]) ? 0 : 1;
+				uint8 playerIndex = (scoreBitset[bitIndex + 0]) ? 0 : 1;
 					
-					//check if the next pixel has color
-					int bitIndexAdjacents = (i + 1 + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();		
-					if ((i+1 < canvasTextureWidth) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
-					{
-						IPixelsToDiffuse.Add(i + 1);
-						JPixelsToDiffuse.Add(j);
-						PlayerIDS.Add(playerID);
-						AlphaValues.Add(newAlphaValue);
+				//check if the next pixel has color
+				int bitIndexAdjacents = (i + 1 + j * canvasTextureWidth) * gameState->maxNumPlayers;
+				if ((i+1 < canvasTextureWidth) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
+				{
+					IPixelsToDiffuse.Add(i + 1);
+					JPixelsToDiffuse.Add(j);
+					PlayerIndexes.Add(playerIndex);
+					AlphaValues.Add(newAlphaValue);
 
-					}
+				}
 
-					bitIndexAdjacents = (i - 1 + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+				bitIndexAdjacents = (i - 1 + j * canvasTextureWidth) * gameState->maxNumPlayers;
 
-					if ((i - 1 >= 0)&& scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
-					{
-						IPixelsToDiffuse.Add(i - 1);
-						JPixelsToDiffuse.Add(j);
-						PlayerIDS.Add(playerID);
-						AlphaValues.Add(newAlphaValue);
-					}
+				if ((i - 1 >= 0)&& scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
+				{
+					IPixelsToDiffuse.Add(i - 1);
+					JPixelsToDiffuse.Add(j);
+					PlayerIndexes.Add(playerIndex);
+					AlphaValues.Add(newAlphaValue);
+				}
 
-					bitIndexAdjacents = (i + (j + 1) * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-					if ((j+1 < canvasTextureHeight) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
-					{
-						IPixelsToDiffuse.Add(i);
-						JPixelsToDiffuse.Add(j+1);
-						PlayerIDS.Add(playerID);
-						AlphaValues.Add(newAlphaValue);
-					}
+				bitIndexAdjacents = (i + (j + 1) * canvasTextureWidth) * gameState->maxNumPlayers;
+				if ((j+1 < canvasTextureHeight) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
+				{
+					IPixelsToDiffuse.Add(i);
+					JPixelsToDiffuse.Add(j+1);
+					PlayerIndexes.Add(playerIndex);
+					AlphaValues.Add(newAlphaValue);
+				}
 
-					bitIndexAdjacents = (i + (j - 1) * canvasTextureWidth) * gameMode->GetMaxNumPlayers();	
-					if ((j - 1 >= 0) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
-					{
-						IPixelsToDiffuse.Add(i);
-						JPixelsToDiffuse.Add(j - 1);
-						PlayerIDS.Add(playerID);
-						AlphaValues.Add(newAlphaValue);
-					}
+				bitIndexAdjacents = (i + (j - 1) * canvasTextureWidth) * gameState->maxNumPlayers;
+				if ((j - 1 >= 0) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
+				{
+					IPixelsToDiffuse.Add(i);
+					JPixelsToDiffuse.Add(j - 1);
+					PlayerIndexes.Add(playerIndex);
+					AlphaValues.Add(newAlphaValue);
 				}
 			}
 		}
+	}
 
-		for (int i = 0; i < IPixelsToDiffuse.Num(); i++) 
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Alpha value is %d"), AlphaValues[i]); //TODO delete
-			ColorPixel(IPixelsToDiffuse[i], JPixelsToDiffuse[i], PlayerIDS[i], AlphaValues[i]);
-		}
+	for (int i = 0; i < IPixelsToDiffuse.Num(); i++) 
+	{
+		FColor color = gameState->GetPlayerColorByIndex(PlayerIndexes[i]);
+		ColorPixel(IPixelsToDiffuse[i], JPixelsToDiffuse[i], PlayerIndexes[i], color, AlphaValues[i]);
+	}
 
-		if (IPixelsToDiffuse.Num() > 0) 
-		{
-			// Update texture and assign it to material
-			UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
-			dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
-		}
+	if (IPixelsToDiffuse.Num() > 0) 
+	{
+		// Update texture and assign it to material
+		UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
+		dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
 	}
 }
 
-void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, uint8 alphaValue)
+void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerIndex, FColor color, uint8 alphaValue)
 {
 	//safety check for pixels that are outside the image
 	if (i >= canvasTextureWidth || j >= canvasTextureHeight) 
@@ -368,18 +366,13 @@ void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, uint8 alphaV
 		return;
 	}
 
-	// Determine if the painted pixel is inside the painting
-	int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
-	int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
-	bool isScore = maskBitset[mi + mj * maskTextureWidth];
-
-	//Get the world, game mode and color
-	UWorld *world = GetWorld();
-	AColouringBookGameMode *gameMode = nullptr;
-	if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr)
-		&& (playerID < gameMode->GetMaxNumPlayers()))
-	{ 
-		FColor color = gameMode->GetPlayerColor(playerID);
+	AColouringBookGameState* gameState = Cast<AColouringBookGameState>(GetWorld()->GetGameState());
+	if (playerIndex < gameState->maxNumPlayers)
+	{
+		// Determine if the painted pixel is inside the painting
+		int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
+		int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
+		bool isScore = maskBitset[mi + mj * maskTextureWidth];
 
 		// Update pixel color
 		if (!MaskDebugModeOn || isScore)
@@ -392,17 +385,17 @@ void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, uint8 alphaV
 		}
 
 		// Update score for current player
-		int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-		if (scoreBitset[bitIndex + playerID] == false) // Only update score if the player painted a new pixel
+		int bitIndex = (i + j * canvasTextureWidth) * gameState->maxNumPlayers;
+		if (scoreBitset[bitIndex + playerIndex] == false) // Only update score if the player painted a new pixel
 		{
-			scoreBitset[bitIndex + playerID] = true;
-			scoreCounts[playerID] += (int)isScore;
+			scoreBitset[bitIndex + playerIndex] = true;
+			scoreCounts[playerIndex] += (int)isScore;
 		}
 
 		// Update score for overwritten player if needed
-		for (int k = 0; k < gameMode->GetMaxNumPlayers(); k++)
+		for (int k = 0; k < gameState->maxNumPlayers; k++)
 		{
-			if (playerID != k && scoreBitset[bitIndex + k] == true)
+			if (playerIndex != k && scoreBitset[bitIndex + k] == true)
 			{
 				scoreBitset[bitIndex + k] = false;
 				scoreCounts[k] -= (int)isScore;
