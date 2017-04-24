@@ -275,13 +275,13 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 
 		for (int i = 0; i < IPixelsToDiffuse.Num(); i++) 
 		{
-			ColorPixel(IPixelsToDiffuse[i], JPixelsToDiffuse[i], PlayerIDS[i]);
+			ColorPixel(IPixelsToDiffuse[i], JPixelsToDiffuse[i], PlayerIDS[i], 0.9f);
 		}
 	}
 }
 
 
-void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID)
+void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, float alphaValue)
 {
 	//safety check for pixels that are outside the image
 	if (i >= canvasTextureWidth || j >= canvasTextureHeight) 
@@ -309,7 +309,7 @@ void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID)
 			dynamicColors[pixelIndex + 0] = color.B;
 			dynamicColors[pixelIndex + 1] = color.G;
 			dynamicColors[pixelIndex + 2] = color.R;
-			dynamicColors[pixelIndex + 3] = color.A;
+			dynamicColors[pixelIndex + 3] = 255 * alphaValue;
 		}
 
 		// Update score for current player

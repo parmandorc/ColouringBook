@@ -43,7 +43,7 @@ public:
 
 	void DiffuseInk(); //TODO implement
 
-	void ColorPixel(int i, int j, uint8 playerID);
+	void ColorPixel(int i, int j, uint8 playerID, float alphaValue = 1.0f);
 
 private:
 	// The array of dynamic materials
@@ -73,4 +73,5 @@ private:
 
 	// The maximum score that can be achieved with the active painting
 	uint32 maxScore;
+
 };
