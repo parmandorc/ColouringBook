@@ -49,8 +49,10 @@ public:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	void DiffuseInk(); //TODO implement
-
+	//Function to set parameters for ink diffusion
+	void DiffuseInk(); 
+	
+	//Function that actually colors pixels
 	void ColorPixel(int i, int j, uint8 playerID, uint8 alphaValue = 255);
 
 private:
