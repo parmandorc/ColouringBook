@@ -3,6 +3,9 @@
 #include "ColouringBook.h"
 #include "FSMState_BuildUp.h"
 #include "Director.h"
+#include "EngineUtils.h"
+#include "ColouringBookCharacter.h"
+#include "IntensityTracker.h"
 
 UFSMState_BuildUp::UFSMState_BuildUp()
 {
@@ -23,11 +26,26 @@ void UFSMState_BuildUp::Tick(float DeltaTime)
 
 void UFSMState_BuildUp::OnExit()
 {
-	UWorld* world = GetWorld();
+	UWorld* world = GetOuter()->GetWorld();
 	if (world != nullptr)
 	{
 		world->GetTimerManager().ClearTimer(SpawnTimerHandle);
 	}
+}
+
+UDirectorFSMState::State UFSMState_BuildUp::CheckForTransitions()
+{
+	// Check to see if any player has reached max intensity
+	for (TActorIterator<AColouringBookCharacter> PlayerItr(GetOuter()->GetWorld()); PlayerItr; ++PlayerItr) 
+	{
+		UIntensityTracker* intensityTracker = (*PlayerItr)->GetIntensityTracker();
+		if (intensityTracker->GetIntensity() >= 1.0f)
+		{
+			return UDirectorFSMState::State::BUILD_UP; // Reset State (later, it will be a transition to a different state)
+		}
+	}
+
+	return UDirectorFSMState::State::NONE;
 }
 
 void UFSMState_BuildUp::SetSpawnTimer()

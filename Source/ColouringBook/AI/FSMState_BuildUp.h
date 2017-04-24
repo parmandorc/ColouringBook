@@ -20,6 +20,7 @@ public:
 	virtual void OnEnter() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void OnExit() override;
+	virtual State CheckForTransitions() override;
 
 private:
 	// The timer handle for spawning enemies
