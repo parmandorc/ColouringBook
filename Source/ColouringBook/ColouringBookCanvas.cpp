@@ -211,7 +211,7 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 }
 
 
-void AColouringBookCanvas::DiffuseInk(/*arguments*/)
+void AColouringBookCanvas::DiffuseInk()
 {
 	// Initialize the score bitset and counts
 	UWorld *world = GetWorld();
