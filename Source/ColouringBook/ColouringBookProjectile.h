@@ -39,7 +39,7 @@ private:
 
 	/* Sets the number ID of the actor that spawned this actor */
 	UPROPERTY(Replicated)
-		int32 ownerID;
+	int32 ownerID;
 
 	/* Sets the player that owns this actor */
 	AColouringBookCharacter* owner;
@@ -51,6 +51,8 @@ public:
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
 	/* Returns the player that owns this actor */
 	FORCEINLINE AColouringBookCharacter* GetPlayerOwner() const { return owner; }
+
+	int32 GetOwnerID() { ownerID; }
 };
 
 

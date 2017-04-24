@@ -7,6 +7,9 @@
 // Sets default values
 APuppetEnemyCharacter::APuppetEnemyCharacter()
 {
+	// Make sure that this character replicates
+	bReplicates = true;
+
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
@@ -65,7 +68,7 @@ void APuppetEnemyCharacter::SpawnInkDrops(AColouringBookProjectile* bullet)
 				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
 			AColouringBookInkDrop *inkDrop = World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
 			inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
-			//inkDrop->SetOwnerID(bullet->GetPlayerOwner()->GetPlayerID()); FIXME: There is no PLayerID in multiplayer!!!
+			inkDrop->SetOwnerID(bullet->GetOwnerID());
 		}
 	}
 }

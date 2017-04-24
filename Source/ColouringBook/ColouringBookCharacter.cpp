@@ -205,6 +205,7 @@ AColouringBookProjectile* AColouringBookCharacter::SpawnProjectile(int32 playerI
 		// spawn the projectile
 		projectile = GetWorld()->SpawnActor<AColouringBookProjectile>(fireLocation, fireRotator);
 		projectile->SetOwnerID(playerId);
+		projectile->SetPlayerOwner(this);
 	}
 
 	return projectile;
@@ -212,6 +213,12 @@ AColouringBookProjectile* AColouringBookCharacter::SpawnProjectile(int32 playerI
 
 void AColouringBookCharacter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (Role != ROLE_Authority)
+	{
+		// For the moment only allow the server to proccess hits
+		return;
+	}
+
 	AColouringBookProjectile* bullet = nullptr;
 	if ((OtherActor != NULL) && (OtherActor != this) && ((bullet = Cast<AColouringBookProjectile>(OtherActor)) != nullptr))
 	{
