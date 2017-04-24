@@ -43,7 +43,7 @@ void AColouringBookGameMode::CreatePlayers(int numPlayers)
 	while (playerIndex < numPlayers && playerIndex < MAX_PLAYERS)
 	{
 		APlayerController* player = UGameplayStatics::CreatePlayer(GetWorld());
-		Cast<AColouringBookCharacter>(player->GetControlledPawn())->SetPlayerID(playerIndex);
+		Cast<AColouringBookCharacter>(player->GetPawn())->SetPlayerID(playerIndex);
 		playerIndex++;
 	}
 }

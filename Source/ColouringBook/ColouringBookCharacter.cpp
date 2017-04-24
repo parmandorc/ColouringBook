@@ -96,7 +96,7 @@ void AColouringBookCharacter::FireShot(FVector FireDirection)
 			if (World != NULL)
 			{
 				// spawn the projectile
-				AColouringBookProjectile *projectile = World->SpawnActor<AColouringBookProjectile>(SpawnLocation, FireRotation);
+				AColouringBookProjectile *projectile = World->SpawnActor<AColouringBookProjectile>(ProjectileBP, SpawnLocation, FireRotation);
 				projectile->SetPlayerOwner(this);
 			}
 
