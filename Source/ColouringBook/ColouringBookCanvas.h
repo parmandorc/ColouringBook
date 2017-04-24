@@ -24,11 +24,20 @@ class COLOURINGBOOK_API AColouringBookCanvas : public AStaticMeshActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
 	class UTexture2D* MaskTexture;
 
+	//Sets the variation of alpha in ink drops once they hit the ground
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
+	float alphaVariation;
+
+	//Caps alpha variations in spilled ink drops
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
+	float alphaLimit;
+
 	/* When the mask debug mode is on, only the pixels of the canvas that are inside the painting (and count towards score) will be colored.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
 	bool MaskDebugModeOn;
 
 public:
+	
 	AColouringBookCanvas();
 
 	// Begin Actor Interface
@@ -39,6 +48,12 @@ public:
 	// Function to handle the canvas being hit by something
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	//Function to set parameters for ink diffusion
+	void DiffuseInk(); 
+	
+	//Function that actually colors pixels
+	void ColorPixel(int i, int j, uint8 playerID, uint8 alphaValue = 255);
 
 private:
 	// The array of dynamic materials
@@ -68,4 +83,5 @@ private:
 
 	// The maximum score that can be achieved with the active painting
 	uint32 maxScore;
+
 };
