@@ -23,13 +23,13 @@ public:
 	AColouringBookInkDrop();
 
 	// Sets the owner
-	void SetOwnerID(uint32 _ownerID);
+	void SetOwnerID(int32 _ownerID);
 
 private:
 
 	/* The number ID of the player that owns this actor */
 	UPROPERTY(ReplicatedUsing=OnReplicatedOwnerID)
-	uint32 ownerID;
+	int32 ownerID;
 
 	/* The dynamic material instance of the ink drop */
 	class UMaterialInstanceDynamic* dynamicMaterial;

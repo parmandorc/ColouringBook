@@ -52,7 +52,7 @@ public:
 	/* Returns the player that owns this actor */
 	FORCEINLINE AColouringBookCharacter* GetPlayerOwner() const { return owner; }
 
-	int32 GetOwnerID() { ownerID; }
+	int32 GetOwnerID() { return ownerID; }
 };
 
 

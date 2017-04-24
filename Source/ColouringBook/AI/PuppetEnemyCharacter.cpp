@@ -26,7 +26,7 @@ void APuppetEnemyCharacter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherAct
 {
 	if (Role != ROLE_Authority)
 	{
-		// for the moment only allow players to proccess hits
+		// for the moment only allow the server to proccess hits
 		return;
 	}
 
@@ -68,7 +68,9 @@ void APuppetEnemyCharacter::SpawnInkDrops(AColouringBookProjectile* bullet)
 				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
 			AColouringBookInkDrop *inkDrop = World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
 			inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
-			inkDrop->SetOwnerID(bullet->GetOwnerID());
+
+			int32 ownerId = bullet->GetOwnerID();
+			inkDrop->SetOwnerID(ownerId);
 		}
 	}
 }
@@ -95,6 +97,12 @@ void APuppetEnemyCharacter::OnDeath()
 
 void APuppetEnemyCharacter::Fire()
 {
+	if (Role != ROLE_Authority)
+	{
+		// Only allow the server to fire
+		return;
+	}
+
 	const FVector FireDirection = GetActorForwardVector();
 	const FRotator FireRotation = FireDirection.Rotation();
 	// Spawn projectile at an offset from this pawn

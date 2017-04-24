@@ -36,7 +36,7 @@ AColouringBookInkDrop::AColouringBookInkDrop()
 	bReplicates = true;
 }
 
-void AColouringBookInkDrop::SetOwnerID(uint32 _ownerID)
+void AColouringBookInkDrop::SetOwnerID(int32 _ownerID)
 {
 	ownerID = _ownerID;
 
