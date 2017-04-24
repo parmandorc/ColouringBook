@@ -19,7 +19,7 @@ UDirectorFSMState::State UFSMState_Peak::CheckForTransitions()
 	// Check if the necesarry amount of enemies have died
 	if (initialNumEnemies == 0 || 1.0f - (float)director->GetSpawnedEnemiesNum() / initialNumEnemies >= director->GetPeakEnemiesPercentage())
 	{
-		return State::BUILD_UP;
+		return State::RELAX;
 	}
 
 	return State::NONE;

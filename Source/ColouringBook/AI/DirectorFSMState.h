@@ -19,6 +19,7 @@ public:
 	static enum State {
 		BUILD_UP,
 		PEAK,
+		RELAX,
 		NONE
 	};
 

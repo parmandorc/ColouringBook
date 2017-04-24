@@ -16,6 +16,7 @@ ADirector::ADirector()
 	MaxSpawnTime = 3.0f;
 	BuildUpTimeForMaxSpawnRate = 15.0f;
 	PeakEnemiesPercentage = 1.0f;
+	RelaxMinTime = 5.0f;
 }
 
 // Called when the game starts or when spawned
@@ -81,6 +82,7 @@ void ADirector::SpawnEnemy()
 
 void ADirector::FSMTransitionTo(UDirectorFSMState::State newState)
 {
+	UE_LOG(LogTemp, Log, TEXT("FSM transition to state: %d"), static_cast<int>(newState));
 	FSMStates[currentState]->OnExit();
 	currentState = newState;
 	FSMStates[currentState]->OnEnter();

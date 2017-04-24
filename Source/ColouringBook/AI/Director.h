@@ -34,6 +34,10 @@ class COLOURINGBOOK_API ADirector : public AActor
 	// The percentage of enemies that have to die to transition out of the Peak state
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0", UIMax = "1.0"))
 	float PeakEnemiesPercentage;
+
+	// The minimum time the director stays in Relax mode
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0"))
+	float RelaxMinTime;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -77,4 +81,6 @@ public:
 	FORCEINLINE int GetSpawnedEnemiesNum() const { return spawnedEnemies.Num(); }
 	// Return he percentage of enemies that have to die to transition out of the Peak state
 	FORCEINLINE float GetPeakEnemiesPercentage() const { return PeakEnemiesPercentage; }
+	// Returns the minimum time the director stays in Relax mode
+	FORCEINLINE float GetRelaxMinTime() const { return RelaxMinTime; }
 };

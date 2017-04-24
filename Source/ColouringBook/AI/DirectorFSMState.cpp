@@ -5,6 +5,7 @@
 #include "Director.h"
 #include "FSMState_BuildUp.h"
 #include "FSMState_Peak.h"
+#include "FSMState_Relax.h"
 
 UDirectorFSMState::UDirectorFSMState()
 {
@@ -18,6 +19,7 @@ TArray<UDirectorFSMState*> UDirectorFSMState::CreateFSM(ADirector* director)
 	// Add all the states
 	FSM.Add(NewObject<UDirectorFSMState>(director, UFSMState_BuildUp::StaticClass())->SetDirector(director));
 	FSM.Add(NewObject<UDirectorFSMState>(director, UFSMState_Peak::StaticClass())->SetDirector(director));
+	FSM.Add(NewObject<UDirectorFSMState>(director, UFSMState_Relax::StaticClass())->SetDirector(director));
 
 	return FSM;
 }
