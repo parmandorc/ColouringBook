@@ -61,7 +61,6 @@ FVector ADirector::GetRandomCirclePosition(FVector center, float radius)
 	return position;
 }
 
-//TODO make enemies not spawn near player
 void ADirector::SpawnEnemy()
 {
 	//Handle spawning of enemies

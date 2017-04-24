@@ -39,3 +39,5 @@ public:
 	FORCEINLINE AColouringBookCharacter* GetPlayerOwner() const { return owner; }
 };
 
+
+
