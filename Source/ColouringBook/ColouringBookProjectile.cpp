@@ -5,6 +5,7 @@
 #include "ColouringBookInkDrop.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+
 AColouringBookProjectile::AColouringBookProjectile() 
 {
 	// Static reference to the mesh to use for the projectile
@@ -15,7 +16,6 @@ AColouringBookProjectile::AColouringBookProjectile()
 	ProjectileMesh->SetStaticMesh(ProjectileMeshAsset.Object);
 	ProjectileMesh->SetupAttachment(RootComponent);
 	ProjectileMesh->BodyInstance.SetCollisionProfileName("Projectile");
-	ProjectileMesh->OnComponentHit.AddDynamic(this, &AColouringBookProjectile::OnHit);		// set up a notification for when this component hits something
 	RootComponent = ProjectileMesh;
 
 	// Use a ProjectileMovementComponent to govern this projectile's movement
@@ -29,40 +29,4 @@ AColouringBookProjectile::AColouringBookProjectile()
 
 	// Die after 3 seconds by default
 	InitialLifeSpan = 3.0f;
-
-	// Defaults
-	InkDropsSpawnAmount = 10;
-	InkDropsSpawnAngleVariance = 15.0f;
-}
-
-void AColouringBookProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
-{
-	// Only add impulse and destroy projectile if we hit a physics
-	if ((OtherActor != NULL) && (OtherActor != this) && (OtherComp != NULL) && OtherComp->IsSimulatingPhysics())
-	{
-		OtherComp->AddImpulseAtLocation(GetVelocity() * 20.0f, GetActorLocation());
-
-		SpawnInkDrops();
-	}
-
-	Destroy();
-}
-
-void AColouringBookProjectile::SpawnInkDrops()
-{
-	const FRotator fireRotation = GetActorRotation();
-	const FVector spawnLocation = GetActorLocation();// + FireRotation.RotateVector(GunOffset);
-
-	UWorld* const World = GetWorld();
-	if (World != NULL)
-	{
-		for (int i = 0; i < InkDropsSpawnAmount; i++)
-		{
-			// spawn the projectile
-			const FRotator randomRotation = FRotator::MakeFromEuler(FVector(0.0f,
-				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance),
-				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
-			World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
-		}
-	}
 }

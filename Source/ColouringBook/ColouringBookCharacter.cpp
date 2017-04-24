@@ -31,6 +31,12 @@ AColouringBookCharacter::AColouringBookCharacter()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // ...at this rotation rate
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
+
+	// Set up a notification for when this component is hit by something
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCharacter::OnHit);
+
+	// Create intensity tracker component
+	IntensityTrackerComponent = CreateDefaultSubobject<UIntensityTracker>("IntensityTracker");
 }
 
 void AColouringBookCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -90,7 +96,8 @@ void AColouringBookCharacter::FireShot(FVector FireDirection)
 			if (World != NULL)
 			{
 				// spawn the projectile
-				World->SpawnActor<AColouringBookProjectile>(SpawnLocation, FireRotation);
+				AColouringBookProjectile *projectile = World->SpawnActor<AColouringBookProjectile>(SpawnLocation, FireRotation);
+				projectile->SetPlayerOwner(this);
 			}
 
 			bCanFire = false;
@@ -128,3 +135,26 @@ void AColouringBookCharacter::MoveRight(float Value)
 	}
 }
 
+void AColouringBookCharacter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	AColouringBookProjectile* bullet = nullptr;
+	if ((OtherActor != NULL) && (OtherActor != this) && ((bullet = Cast<AColouringBookProjectile>(OtherActor)) != nullptr))
+	{
+		// Take damage
+		if (IntensityTrackerComponent != nullptr)
+		{
+			IntensityTrackerComponent->OnHit();
+		}
+
+		// Destroy the bullet actor
+		OtherActor->Destroy();
+	}
+}
+
+void AColouringBookCharacter::OnEnemyHit(AActor* enemy)
+{
+	if (IntensityTrackerComponent != nullptr)
+	{
+		IntensityTrackerComponent->OnEnemyHit(enemy);
+	}
+}

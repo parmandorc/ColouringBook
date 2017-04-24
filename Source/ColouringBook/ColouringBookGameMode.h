@@ -10,6 +10,10 @@ class AColouringBookGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	/* The colors that identify each player */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	TArray<FColor> playerColors;
+
 public:
 	AColouringBookGameMode();
 
@@ -25,6 +29,13 @@ protected:
 	void CreatePlayers(int numPlayers);
 
 	TArray<AActor*> playerStarts;
+
+public:
+	/* Returns the color that is associated with a player ID */
+	FORCEINLINE FColor GetPlayerColor(uint8 playerIndex) const { return (playerIndex < playerColors.Num()) ? playerColors[playerIndex] : FColor::White; }
+
+	/* Returns the maximum number of players in the game */
+	FORCEINLINE int32 GetMaxNumPlayers() const { return playerColors.Num(); }
 };
 
 
