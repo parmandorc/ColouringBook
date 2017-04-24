@@ -65,4 +65,8 @@ private:
 
 	/* Called when the character dies */
 	void OnDeath();
+
+	// Called by the server to inform all the clients that an enemy fired
+	UFUNCTION(NetMulticast, unreliable)
+	void MulticastFired();
 };

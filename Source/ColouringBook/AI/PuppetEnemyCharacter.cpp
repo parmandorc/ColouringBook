@@ -115,6 +115,11 @@ void APuppetEnemyCharacter::Fire()
 		World->SpawnActor<AColouringBookProjectile>(ProjectileBP, SpawnLocation, FireRotation);
 	}
 
+	MulticastFired();
+}
+
+void APuppetEnemyCharacter::MulticastFired_Implementation()
+{
 	// try and play the sound if specified
 	if (FireSound != nullptr)
 	{
