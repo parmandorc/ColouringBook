@@ -24,6 +24,14 @@ class COLOURINGBOOK_API AColouringBookCanvas : public AStaticMeshActor
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
 	class UTexture2D* MaskTexture;
 
+	//Sets the variation of alpha in ink drops once they hit the ground
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
+	float alphaVariation;
+
+	//Caps alpha variations in spilled ink drops
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
+	float alphaLimit;
+
 	/* When the mask debug mode is on, only the pixels of the canvas that are inside the painting (and count towards score) will be colored.*/
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Canvas, meta = (AllowPrivateAccess = "true"))
 	bool MaskDebugModeOn;

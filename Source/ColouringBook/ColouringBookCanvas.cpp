@@ -74,6 +74,10 @@ AColouringBookCanvas::AColouringBookCanvas()
 
 	// Set callback for when canvas is hit by something
 	GetStaticMeshComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCanvas::OnHit);
+
+	//Set initial alpha values for spilled ink drops
+	alphaVariation = 0.99f;
+	alphaLimit = 0.9f;
 }
 
 void AColouringBookCanvas::Tick(float DeltaSeconds)
@@ -218,8 +222,9 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 		TArray<int> JPixelsToDiffuse;
 		TArray<uint8> PlayerIDS;
 		TArray<uint8> AlphaValues;
-		float alphaVariation = 0.99f;
-		float alphaLimit = 0.9f;
+
+		/*float alphaVariation = 0.99f;
+		float alphaLimit = 0.9f;*/
 
 		// Check whole canvas for colors
 		for (int j = 0; j < canvasTextureHeight; j++)
@@ -292,6 +297,13 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 			
 			UE_LOG(LogTemp, Warning, TEXT("Alpha value is %d"), AlphaValues[i]);
 			ColorPixel(IPixelsToDiffuse[i], JPixelsToDiffuse[i], PlayerIDS[i], AlphaValues[i]);
+		}
+
+		if (IPixelsToDiffuse.Num() > 0) 
+		{
+			// Update texture and assign it to material
+			UpdateTextureRegions(dynamicTexture, 0, 1, updateTextureRegion, (uint32)(canvasTextureWidth * 4), (uint32)4, dynamicColors, false);
+			dynamicMaterials[0]->SetTextureParameterValue("DynamicTextureParam", dynamicTexture);
 		}
 	}
 }
