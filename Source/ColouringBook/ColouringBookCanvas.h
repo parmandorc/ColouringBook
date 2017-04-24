@@ -43,7 +43,7 @@ public:
 
 	void DiffuseInk(); //TODO implement
 
-	void ColorPixel(int i, int j, uint8 playerID, float alphaValue = 1.0f);
+	void ColorPixel(int i, int j, uint8 playerID, uint8 alphaValue = 255);
 
 private:
 	// The array of dynamic materials

@@ -216,7 +216,9 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 	{
 		TArray<int> IPixelsToDiffuse;
 		TArray<int> JPixelsToDiffuse;
-		TArray<int> PlayerIDS;
+		TArray<uint8> PlayerIDS;
+		TArray<uint8> AlphaValues;
+		float alphaVariation = 0.99f;
 
 		// Check whole canvas for colors
 		for (int j = 0; j < canvasTextureHeight; j++)
@@ -224,12 +226,15 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 			for (int i = 0; i < canvasTextureWidth; i++)
 			{
 				int bitIndex = (i + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+				int pixelIndex = (i + j * canvasTextureWidth) * 4;
+				uint8 newAlphaValue = FMath::RoundToInt(dynamicColors[pixelIndex + 3] * alphaVariation);
 				if ((scoreBitset[bitIndex + 0] == true|| scoreBitset[bitIndex + 1] == true))
 				{
 					uint8 playerID = (scoreBitset[bitIndex + 0]) ? 0 : 1;
 					
 					//check if the next pixel has color
 					int bitIndexAdjacents = (i + 1 + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					/*int pixelIndexAdjacents = (i + 1 + j * canvasTextureWidth) * 4;*/
 					if ((i+1 < canvasTextureWidth) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
@@ -237,9 +242,12 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 						IPixelsToDiffuse.Add(i + 1);
 						JPixelsToDiffuse.Add(j);
 						PlayerIDS.Add(playerID);
+						AlphaValues.Add(newAlphaValue);
+
 					}
 
 					bitIndexAdjacents = (i - 1 + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					/*pixelIndexAdjacents = (i - 1 + j * canvasTextureWidth) * 4;*/
 					if ((i - 1 >= 0)&& scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
@@ -247,9 +255,11 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 						IPixelsToDiffuse.Add(i - 1);
 						JPixelsToDiffuse.Add(j);
 						PlayerIDS.Add(playerID);
+						AlphaValues.Add(newAlphaValue);
 					}
 
-					bitIndexAdjacents = (i + (j+1) * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					bitIndexAdjacents = (i + (j + 1) * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					/*pixelIndexAdjacents = (i + (j + 1) * canvasTextureWidth) * 4;*/
 					if ((j+1 < canvasTextureHeight) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
@@ -257,9 +267,11 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 						IPixelsToDiffuse.Add(i);
 						JPixelsToDiffuse.Add(j+1);
 						PlayerIDS.Add(playerID);
+						AlphaValues.Add(newAlphaValue);
 					}
 
-					bitIndexAdjacents = (i + (j-1) * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					bitIndexAdjacents = (i + (j - 1) * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					/*pixelIndexAdjacents = (i + (j - 1) * canvasTextureWidth) * 4;*/
 					if ((j - 1 >= 0) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
@@ -267,6 +279,7 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 						IPixelsToDiffuse.Add(i);
 						JPixelsToDiffuse.Add(j - 1);
 						PlayerIDS.Add(playerID);
+						AlphaValues.Add(newAlphaValue);
 					}
 
 				}
@@ -275,13 +288,15 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 
 		for (int i = 0; i < IPixelsToDiffuse.Num(); i++) 
 		{
-			ColorPixel(IPixelsToDiffuse[i], JPixelsToDiffuse[i], PlayerIDS[i], 0.9f);
+			
+			UE_LOG(LogTemp, Warning, TEXT("Alpha value is %d"), AlphaValues[i]);
+			ColorPixel(IPixelsToDiffuse[i], JPixelsToDiffuse[i], PlayerIDS[i], AlphaValues[i]);
 		}
 	}
 }
 
 
-void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, float alphaValue)
+void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, uint8 alphaValue)
 {
 	//safety check for pixels that are outside the image
 	if (i >= canvasTextureWidth || j >= canvasTextureHeight) 
@@ -309,7 +324,7 @@ void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, float alphaV
 			dynamicColors[pixelIndex + 0] = color.B;
 			dynamicColors[pixelIndex + 1] = color.G;
 			dynamicColors[pixelIndex + 2] = color.R;
-			dynamicColors[pixelIndex + 3] = 255 * alphaValue;
+			dynamicColors[pixelIndex + 3] = alphaValue;
 		}
 
 		// Update score for current player
