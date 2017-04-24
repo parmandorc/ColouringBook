@@ -44,6 +44,7 @@ public:
 
 private:
 	// The list of states that make up the Finite State Machine
+	UPROPERTY()
 	TArray<UDirectorFSMState*> FSMStates;
 
 	// The current active state of the FSM
