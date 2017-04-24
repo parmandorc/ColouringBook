@@ -26,7 +26,7 @@ public:
 	void SetOwnerID(uint8 _ownerID);
 
 private:
-	/* The number ID of the actor that spawned this actor */
+	/* The number ID of the player that owns this actor */
 	uint8 ownerID;
 
 	/* The dynamic material instance of the ink drop */
@@ -37,6 +37,6 @@ public:
 	FORCEINLINE UStaticMeshComponent* GetInkDropMesh() const { return InkDropMesh; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
-	/* Returns the number ID of the actor that spawned this actor */
+	/* Returns the number ID of the player that owns this actor */
 	FORCEINLINE uint8 GetOwnerID() const { return ownerID; }
 };
