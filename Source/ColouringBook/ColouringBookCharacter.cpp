@@ -158,3 +158,8 @@ void AColouringBookCharacter::OnEnemyHit(AActor* enemy)
 		IntensityTrackerComponent->OnEnemyHit(enemy);
 	}
 }
+
+void AColouringBookCharacter::SetPlayerID(uint8 newID)
+{
+	PlayerID = newID;
+}

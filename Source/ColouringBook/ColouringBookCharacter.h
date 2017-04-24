@@ -51,6 +51,9 @@ public:
 	/* Called when this player hit an enemy */
 	void OnEnemyHit(AActor* enemy);
 
+	/* Sets the ID for this player */
+	void SetPlayerID(uint8 newID);
+
 protected:
 	/** Called for forwards/backward input */
 	void MoveForward(float Value);
