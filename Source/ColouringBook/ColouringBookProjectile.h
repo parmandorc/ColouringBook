@@ -24,16 +24,8 @@ class AColouringBookProjectile : public AActor
 public:
 	AColouringBookProjectile();
 
-	/** Function to handle the projectile hitting something */
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
 	void SetOwnerID(int32 _ownerID) { ownerID = _ownerID; }
 	void SetPlayerOwner(AColouringBookCharacter* _owner) { owner = _owner; }
-
-private:
-	/* Spawns the ink drops from this bullet */
-	void SpawnInkDrops();
 
 private:
 
