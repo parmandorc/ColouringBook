@@ -18,6 +18,7 @@ class COLOURINGBOOK_API UDirectorFSMState : public UObject
 public:
 	static enum State {
 		BUILD_UP,
+		PEAK,
 		NONE
 	};
 

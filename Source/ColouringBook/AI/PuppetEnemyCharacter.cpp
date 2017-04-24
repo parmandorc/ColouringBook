@@ -69,6 +69,8 @@ void APuppetEnemyCharacter::OnPreDeath(AColouringBookCharacter* player)
 	SetActorEnableCollision(false); // So an enemy can not be shot after dead and spawn ink drops more that once
 
 	player->OnEnemyHit(this); // Callback event to the player that killed this enemy
+
+	director->OnEnemyDeath(this); // Callback event to the director
 }
 
 void APuppetEnemyCharacter::OnDeath()

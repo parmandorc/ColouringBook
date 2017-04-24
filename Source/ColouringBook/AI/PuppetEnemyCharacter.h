@@ -4,6 +4,7 @@
 
 #include "GameFramework/Character.h"
 #include "ColouringBookProjectile.h"
+#include "Director.h"
 #include "PuppetEnemyCharacter.generated.h"
 
 UCLASS()
@@ -43,7 +44,13 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Combat)
 	void Fire();
 
+	// Sets the director that spawned this enemy
+	void SetDirector(ADirector* _director) { director = _director; }
+
 private:
+	// A reference to the director that spawned this enemy
+	ADirector* director;
+
 	/* Function to handle the character being hit by something */
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);	

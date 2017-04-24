@@ -36,7 +36,7 @@ void UIntensityTracker::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		intensity = FMath::Max(intensity - DecayRate * DeltaTime, 0.0f);
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Intensity (%s): %f"), *(GetOwner()->GetName()), intensity);
+	//UE_LOG(LogTemp, Log, TEXT("Intensity (%s): %f"), *(GetOwner()->GetName()), intensity);
 }
 
 void UIntensityTracker::Input(float value)

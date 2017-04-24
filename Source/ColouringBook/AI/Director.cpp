@@ -2,6 +2,7 @@
 
 #include "ColouringBook.h"
 #include "Director.h"
+#include "AI/PuppetEnemyCharacter.h"
 
 // Sets default values
 ADirector::ADirector()
@@ -14,6 +15,7 @@ ADirector::ADirector()
 	MinSpawnTime = 1.0f;
 	MaxSpawnTime = 3.0f;
 	BuildUpTimeForMaxSpawnRate = 15.0f;
+	PeakEnemiesPercentage = 1.0f;
 }
 
 // Called when the game starts or when spawned
@@ -66,7 +68,14 @@ void ADirector::SpawnEnemy()
 	if (World != nullptr)
 	{
 		FVector PuppetLocation = GetRandomCirclePosition(GetActorLocation(), SpawnRadius);
-		ACharacter* SpawnedPuppet = World->SpawnActor<ACharacter>(EnemyBP, PuppetLocation, (GetActorLocation() - PuppetLocation).ToOrientationRotator());
+		APuppetEnemyCharacter* SpawnedPuppet = World->SpawnActor<APuppetEnemyCharacter>(EnemyBP, PuppetLocation, (GetActorLocation() - PuppetLocation).ToOrientationRotator());
+
+		// Register the newly spawned enemy
+		if (SpawnedPuppet != nullptr)
+		{
+			SpawnedPuppet->SetDirector(this);
+			spawnedEnemies.Add(SpawnedPuppet);
+		}
 	}
 }
 
@@ -75,4 +84,9 @@ void ADirector::FSMTransitionTo(UDirectorFSMState::State newState)
 	FSMStates[currentState]->OnExit();
 	currentState = newState;
 	FSMStates[currentState]->OnEnter();
+}
+
+void ADirector::OnEnemyDeath(AActor* enemy)
+{
+	spawnedEnemies.Remove(enemy);
 }

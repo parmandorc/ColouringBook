@@ -41,7 +41,7 @@ UDirectorFSMState::State UFSMState_BuildUp::CheckForTransitions()
 		UIntensityTracker* intensityTracker = (*PlayerItr)->GetIntensityTracker();
 		if (intensityTracker->GetIntensity() >= 1.0f)
 		{
-			return UDirectorFSMState::State::BUILD_UP; // Reset State (later, it will be a transition to a different state)
+			return UDirectorFSMState::State::PEAK;
 		}
 	}
 

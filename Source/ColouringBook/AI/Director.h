@@ -30,6 +30,10 @@ class COLOURINGBOOK_API ADirector : public AActor
 	// The amount of time the director takes to reach maximum spawn rate during build up
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0"))
 	float BuildUpTimeForMaxSpawnRate;
+
+	// The percentage of enemies that have to die to transition out of the Peak state
+	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true", UIMin = "0.0", UIMax = "1.0"))
+	float PeakEnemiesPercentage;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -41,6 +45,9 @@ public:
 
 	//allows custom timing for spawning enemies
 	void SpawnEnemy();
+
+	// Call back event when an enemy spawned by this director dies
+	void OnEnemyDeath(AActor* enemy);
 
 private:
 	// The list of states that make up the Finite State Machine
@@ -56,11 +63,18 @@ private:
 	//helper to generate random position for enemies to spawn
 	FVector GetRandomCirclePosition(FVector center, float radius);
 
+	// The number of enemies that where spawned by this director
+	TArray<AActor*> spawnedEnemies;
+
 public:
 	// Returns the minimum amount of time between enemy spawns
-	FORCEINLINE float GetMinSpawnTime() { return MinSpawnTime; }
+	FORCEINLINE float GetMinSpawnTime() const { return MinSpawnTime; }
 	// Returns the maximum amount of time between enemy spawns
-	FORCEINLINE float GetMaxSpawnTime() { return MaxSpawnTime; }
+	FORCEINLINE float GetMaxSpawnTime() const { return MaxSpawnTime; }
 	// Returns the amount of time the director takes to reach maximum spawn rate during build up
-	FORCEINLINE float GetBuildUpTimeForMaxSpawnRate() { return BuildUpTimeForMaxSpawnRate; }
+	FORCEINLINE float GetBuildUpTimeForMaxSpawnRate() const { return BuildUpTimeForMaxSpawnRate; }
+	// Returns the amount of enemies that are currently alive in the scene
+	FORCEINLINE int GetSpawnedEnemiesNum() const { return spawnedEnemies.Num(); }
+	// Return he percentage of enemies that have to die to transition out of the Peak state
+	FORCEINLINE float GetPeakEnemiesPercentage() const { return PeakEnemiesPercentage; }
 };
