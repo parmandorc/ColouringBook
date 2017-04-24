@@ -33,7 +33,7 @@ AColouringBookCharacter::AColouringBookCharacter()
 	GetCharacterMovement()->AirControl = 0.2f;
 
 	// Set up a notification for when this component is hit by something
-	GetMesh()->OnComponentHit.AddDynamic(this, &AColouringBookCharacter::OnHit);
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCharacter::OnHit);
 
 	// Create intensity tracker component
 	IntensityTrackerComponent = CreateDefaultSubobject<UIntensityTracker>("IntensityTracker");

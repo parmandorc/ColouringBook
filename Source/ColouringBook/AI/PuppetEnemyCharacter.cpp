@@ -11,7 +11,7 @@ APuppetEnemyCharacter::APuppetEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = false;
 
 	// Set up a notification for when this component is hit by something
-	GetMesh()->OnComponentHit.AddDynamic(this, &APuppetEnemyCharacter::OnHit);
+	GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &APuppetEnemyCharacter::OnHit);
 
 	// Defaults
 	GunOffset = FVector(90.0f, 0.0f, 0.0f);
