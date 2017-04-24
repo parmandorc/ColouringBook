@@ -76,9 +76,9 @@ AColouringBookCanvas::AColouringBookCanvas()
 	GetStaticMeshComponent()->OnComponentHit.AddDynamic(this, &AColouringBookCanvas::OnHit);
 }
 
-void AColouringBookCanvas::Tick(float DeltaTime)
+void AColouringBookCanvas::Tick(float DeltaSeconds)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaSeconds);
 		
 	DiffuseInk();
 }
@@ -191,7 +191,7 @@ void AColouringBookCanvas::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActo
 					int dj = FMath::Abs<int>(cj - j);
 					if (di * di + dj * dj <= (r + 0.5f) * (r + 0.5f)) // Only paint the pixels inside the circle
 					{
-						ColorPixel(di, dj, inkDrop->GetOwnerID());
+						ColorPixel(i, j, inkDrop->GetOwnerID());
 					}
 				}
 			}
@@ -214,6 +214,10 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 	AColouringBookGameMode *gameMode = nullptr;
 	if ((world != nullptr) && ((gameMode = Cast<AColouringBookGameMode>(world->GetAuthGameMode())) != nullptr))
 	{
+		TArray<int> IPixelsToDiffuse;
+		TArray<int> JPixelsToDiffuse;
+		TArray<int> PlayerIDS;
+
 		// Check whole canvas for colors
 		for (int j = 0; j < canvasTextureHeight; j++)
 		{
@@ -226,13 +230,52 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 					
 					//check if the next pixel has color
 					int bitIndexAdjacents = (i + 1 + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
-					if ((scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)) 
+					if ((i+1 < canvasTextureWidth) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
 					{
 						//color an adjacent pixel
-						ColorPixel(i+1, j+1, playerID);
+						/*ColorPixel(i+1, j, playerID);*/
+						IPixelsToDiffuse.Add(i + 1);
+						JPixelsToDiffuse.Add(j);
+						PlayerIDS.Add(playerID);
 					}
+
+					bitIndexAdjacents = (i - 1 + j * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					if ((i - 1 >= 0)&& scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
+					{
+						//color an adjacent pixel
+						//ColorPixel(i - 1, j, playerID);
+						IPixelsToDiffuse.Add(i - 1);
+						JPixelsToDiffuse.Add(j);
+						PlayerIDS.Add(playerID);
+					}
+
+					bitIndexAdjacents = (i + (j+1) * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					if ((j+1 < canvasTextureHeight) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
+					{
+						//color an adjacent pixel
+						/*ColorPixel(i, j+1, playerID);*/
+						IPixelsToDiffuse.Add(i);
+						JPixelsToDiffuse.Add(j+1);
+						PlayerIDS.Add(playerID);
+					}
+
+					bitIndexAdjacents = (i + (j-1) * canvasTextureWidth) * gameMode->GetMaxNumPlayers();
+					if ((j - 1 >= 0) && scoreBitset[bitIndexAdjacents + 0] == false && scoreBitset[bitIndexAdjacents + 1] == false)
+					{
+						//color an adjacent pixel
+						//ColorPixel(i, j-1, playerID);
+						IPixelsToDiffuse.Add(i);
+						JPixelsToDiffuse.Add(j - 1);
+						PlayerIDS.Add(playerID);
+					}
+
 				}
 			}
+		}
+
+		for (int i = 0; i < IPixelsToDiffuse.Num(); i++) 
+		{
+			ColorPixel(IPixelsToDiffuse[i], JPixelsToDiffuse[i], PlayerIDS[i]);
 		}
 	}
 }
@@ -240,6 +283,12 @@ void AColouringBookCanvas::DiffuseInk(/*arguments*/)
 
 void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID)
 {
+	//safety check for pixels that are outside the image
+	if (i >= canvasTextureWidth || j >= canvasTextureHeight) 
+	{
+		return;
+	}
+
 	// Determine if the painted pixel is inside the painting
 	int mi = ((float)i / (canvasTextureWidth - 1)) * (maskTextureWidth - 1);
 	int mj = ((float)j / (canvasTextureHeight - 1)) * (maskTextureHeight - 1);
