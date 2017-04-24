@@ -2,6 +2,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+#include "AI/IntensityTracker.h"
 #include "ColouringBookCharacter.generated.h"
 
 UCLASS(Blueprintable)
@@ -25,6 +26,10 @@ class AColouringBookCharacter : public ACharacter
 	UPROPERTY(Category = Audio, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class USoundBase* FireSound;
 
+	/* The intensity tracker component attached to this player */
+	UPROPERTY(Category = AI, EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+	UIntensityTracker* IntensityTrackerComponent;
+
 public:
 	AColouringBookCharacter();
 
@@ -42,6 +47,9 @@ public:
 	// Static names for axis bindings
 	static const FName FireForwardBinding;
 	static const FName FireRightBinding;
+
+	/* Called when this player hit an enemy */
+	void OnEnemyHit(AActor* enemy);
 
 protected:
 	/** Called for forwards/backward input */
@@ -63,6 +71,8 @@ private:
 
 public:
 	/* Returns the number that identifies this player */
-	FORCEINLINE uint8 GetPlayerID() { return PlayerID; }
+	FORCEINLINE uint8 GetPlayerID() const { return PlayerID; }
+	/* Returns the intensity tracker component attached to this player */
+	FORCEINLINE UIntensityTracker* GetIntensityTracker() const { return IntensityTrackerComponent; }
 };
 

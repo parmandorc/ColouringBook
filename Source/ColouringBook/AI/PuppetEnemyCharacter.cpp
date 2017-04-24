@@ -30,7 +30,7 @@ void APuppetEnemyCharacter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherAct
 		OtherActor->Destroy();
 
 		// Kill the puppet character
-		OnPreDeath();
+		OnPreDeath(bullet->GetPlayerOwner());
 		if (DeathDestructionDelay > 0.0f)
 		{
 			FTimerHandle DeathHandle;
@@ -59,14 +59,16 @@ void APuppetEnemyCharacter::SpawnInkDrops(AColouringBookProjectile* bullet)
 				FMath::FRandRange(-InkDropsSpawnAngleVariance, InkDropsSpawnAngleVariance)));
 			AColouringBookInkDrop *inkDrop = World->SpawnActor<AColouringBookInkDrop>(spawnLocation, fireRotation + randomRotation);
 			inkDrop->SetActorScale3D(FVector::FVector(FMath::FRandRange(0.5f, 2.0f)));
-			inkDrop->SetOwnerID(bullet->GetOwnerID());
+			inkDrop->SetOwnerID(bullet->GetPlayerOwner()->GetPlayerID());
 		}
 	}
 }
 
-void APuppetEnemyCharacter::OnPreDeath()
+void APuppetEnemyCharacter::OnPreDeath(AColouringBookCharacter* player)
 {
 	SetActorEnableCollision(false); // So an enemy can not be shot after dead and spawn ink drops more that once
+
+	player->OnEnemyHit(this); // Callback event to the player that killed this enemy
 }
 
 void APuppetEnemyCharacter::OnDeath()

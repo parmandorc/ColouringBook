@@ -34,6 +34,9 @@ AColouringBookCharacter::AColouringBookCharacter()
 
 	// Set up a notification for when this component is hit by something
 	GetMesh()->OnComponentHit.AddDynamic(this, &AColouringBookCharacter::OnHit);
+
+	// Create intensity tracker component
+	IntensityTrackerComponent = CreateDefaultSubobject<UIntensityTracker>("IntensityTracker");
 }
 
 void AColouringBookCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -94,7 +97,7 @@ void AColouringBookCharacter::FireShot(FVector FireDirection)
 			{
 				// spawn the projectile
 				AColouringBookProjectile *projectile = World->SpawnActor<AColouringBookProjectile>(SpawnLocation, FireRotation);
-				projectile->SetOwnerID(PlayerID);
+				projectile->SetPlayerOwner(this);
 			}
 
 			bCanFire = false;
@@ -137,9 +140,21 @@ void AColouringBookCharacter::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	AColouringBookProjectile* bullet = nullptr;
 	if ((OtherActor != NULL) && (OtherActor != this) && ((bullet = Cast<AColouringBookProjectile>(OtherActor)) != nullptr))
 	{
+		// Take damage
+		if (IntensityTrackerComponent != nullptr)
+		{
+			IntensityTrackerComponent->OnHit();
+		}
+
 		// Destroy the bullet actor
 		OtherActor->Destroy();
+	}
+}
 
-		// TODO: Take damage
+void AColouringBookCharacter::OnEnemyHit(AActor* enemy)
+{
+	if (IntensityTrackerComponent != nullptr)
+	{
+		IntensityTrackerComponent->OnEnemyHit(enemy);
 	}
 }

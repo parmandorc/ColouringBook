@@ -51,8 +51,10 @@ private:
 	/* Spawns the ink drops when shot */
 	void SpawnInkDrops(AColouringBookProjectile* bullet);
 
-	/* Called before the character dies */
-	void OnPreDeath();
+	/* Called before the character dies. 
+	 *	@player: The player that killed this enemy
+	 */
+	void OnPreDeath(AColouringBookCharacter* player);
 
 	/* Called when the character dies */
 	void OnDeath();

@@ -2,6 +2,7 @@
 #pragma once
 
 #include "GameFramework/Actor.h"
+#include "ColouringBookCharacter.h"
 #include "ColouringBookProjectile.generated.h"
 
 class UProjectileMovementComponent;
@@ -23,18 +24,18 @@ class AColouringBookProjectile : public AActor
 public:
 	AColouringBookProjectile();
 
-	void SetOwnerID(uint8 _ownerID) { ownerID = _ownerID; }
+	void SetPlayerOwner(AColouringBookCharacter* _owner) { owner = _owner; }
 
 private:
-	/* Sets the number ID of the player that owns this actor */
-	uint8 ownerID;
+	/* Sets the player that owns this actor */
+	AColouringBookCharacter* owner;
 
 public:
 	/** Returns ProjectileMesh subobject **/
 	FORCEINLINE UStaticMeshComponent* GetProjectileMesh() const { return ProjectileMesh; }
 	/** Returns ProjectileMovement subobject **/
 	FORCEINLINE UProjectileMovementComponent* GetProjectileMovement() const { return ProjectileMovement; }
-	/* Returns the number ID of the player that owns this actor */
-	FORCEINLINE uint8 GetOwnerID() const { return ownerID; }
+	/* Returns the player that owns this actor */
+	FORCEINLINE AColouringBookCharacter* GetPlayerOwner() const { return owner; }
 };
 
