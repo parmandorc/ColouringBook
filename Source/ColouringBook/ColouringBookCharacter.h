@@ -1,6 +1,8 @@
 // Copyright 1998-2017 Epic Games, Inc. All Rights Reserved.
 #pragma once
 
+class AColouringBookProjectile; // forward declaration to avoid circular dependencies
+
 #include "GameFramework/Character.h"
 #include "AI/IntensityTracker.h"
 #include "ColouringBookCharacter.generated.h"
@@ -17,6 +19,10 @@ class AColouringBookCharacter : public ACharacter
 	/** Offset from the character location to spawn projectiles */
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	FVector GunOffset;
+
+	/* The class to use for spawning bullet in the scene when firing */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Gameplay, meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AColouringBookProjectile> ProjectileBP;
 
 	/* How fast the weapon will fire */
 	UPROPERTY(Category = Gameplay, EditAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
@@ -50,6 +56,9 @@ public:
 
 	/* Called when this player hit an enemy */
 	void OnEnemyHit(AActor* enemy);
+
+	/* Sets the ID for this player */
+	void SetPlayerID(uint8 newID);
 
 protected:
 	/** Called for forwards/backward input */

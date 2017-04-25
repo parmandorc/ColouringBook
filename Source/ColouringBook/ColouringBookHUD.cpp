@@ -26,7 +26,7 @@ void AColouringBookHUD::DrawHUD()
 
 		AColouringBookGameMode* BookGameMode = Cast<AColouringBookGameMode>(world->GetWorld()->GetAuthGameMode());
 
-		FString RunTimeString = FString::Printf(TEXT("Runtime: %.4f"), BookGameMode->GetRunTime());
+		//FString RunTimeString = FString::Printf(TEXT("Runtime: %.4f"), BookGameMode->GetRunTime());
 		FString ScorePlayer1 = FString::Printf(TEXT("Score Player 1: %d pct " ), (int)(CanvasInstance->GetScore(0) * 100.0f));
 		FString ScorePlayer2 = FString::Printf(TEXT("Score Player 2: %d pct "), (int)(CanvasInstance->GetScore(1) * 100.0f));
 
@@ -34,7 +34,7 @@ void AColouringBookHUD::DrawHUD()
 		//FString HUDString1 = FString::Printf(TEXT("PLAYER 1 SCORE: "));
 		//FString HUDString2 = FString::Printf(TEXT("PLAYER 2 SCORE: "));
 
-		DrawText(RunTimeString, FColor::White, 750, 150, 0, 1.2f);
+		//DrawText(RunTimeString, FColor::White, 750, 150, 0, 1.2f);
 		DrawText(ScorePlayer1, FColor::Green, 200, 20, 0, 1.2f);
 		DrawText(ScorePlayer2, FColor::Blue, 600, 20, 0, 1.2f);
 	}
