@@ -55,6 +55,8 @@ public:
 	//Function that actually colors pixels
 	void ColorPixel(int i, int j, uint8 playerID, uint8 alphaValue = 255);
 
+	float GetScore(uint8 playerID);
+
 private:
 	// The array of dynamic materials
 	TArray<class UMaterialInstanceDynamic*> dynamicMaterials;
@@ -83,5 +85,5 @@ private:
 
 	// The maximum score that can be achieved with the active painting
 	uint32 maxScore;
-
 };
+
