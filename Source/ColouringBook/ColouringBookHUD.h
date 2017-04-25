@@ -20,6 +20,6 @@ class COLOURINGBOOK_API AColouringBookHUD : public AHUD
 	virtual void DrawHUD() override;
 	
 public:
-	UPROPERTY()
+	UPROPERTY(Category = Gameplay, BlueprintReadWrite, EditAnywhere)
 	AColouringBookCanvas* CanvasInstance;
 };

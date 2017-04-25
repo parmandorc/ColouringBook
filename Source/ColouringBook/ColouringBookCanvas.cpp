@@ -348,4 +348,6 @@ float AColouringBookCanvas::GetScore(uint8 playerID)
 	float percentagePainted = (float)scoreCounts[playerID] / maxScore;
 
 	return percentagePainted;
+
+	
 }
