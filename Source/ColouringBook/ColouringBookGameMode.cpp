@@ -3,9 +3,31 @@
 #include "ColouringBook.h"
 #include "ColouringBookGameMode.h"
 #include "ColouringBookCharacter.h"
+#include "ColouringBookHUD.h"
+
+
+
+
+void AColouringBookGameMode::Tick(float DeltaSeconds)
+{
+	RunTime += DeltaSeconds;
+}
+
+//TODO check because it triggers breaking point
+float AColouringBookGameMode::GetRunTime()
+{
+	return RunTime;
+}
+
 
 AColouringBookGameMode::AColouringBookGameMode()
 {
+
+		//Enables Tick for this Actor
+	PrimaryActorTick.bCanEverTick = true;
+
+	HUDClass = AColouringBookHUD::StaticClass();
+
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/Blueprints/ColouringBookCharacter"));
 	if (PlayerPawnBPClass.Class != NULL)

@@ -342,3 +342,10 @@ void AColouringBookCanvas::ColorPixel(int i, int j, uint8 playerID, uint8 alphaV
 		}
 	}
 }
+
+float AColouringBookCanvas::GetScore(uint8 playerID)
+{
+	float percentagePainted = (float)scoreCounts[playerID] / maxScore;
+
+	return percentagePainted;
+}
