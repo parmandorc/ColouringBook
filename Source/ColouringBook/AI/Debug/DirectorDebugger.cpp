@@ -32,7 +32,7 @@ void FDirectorDebugger::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 	DebugData.currentFSMState = FName(TEXT(""));
 	DebugData.playerIntensities.Empty();
 
-	UWorld* world = OwnerPC->GetControlledPawn()->GetWorld();
+	UWorld* world = OwnerPC->GetPawn()->GetWorld();
 	if (world != nullptr)
 	{
 		TActorIterator<ADirector> DirectorItr(world);
@@ -54,7 +54,8 @@ void FDirectorDebugger::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCa
 
 	for (int i = 0; i < DebugData.playerIntensities.Num(); i++)
 	{
-		CanvasContext.Print(FString::Printf(TEXT("Player %d intensity: %f"), i, DebugData.playerIntensities[i]));
+		FString valueColor = DebugData.playerIntensities[i] >= 1.0f ? "yellow" : "white";
+		CanvasContext.Print(FString::Printf(TEXT("Player %d intensity: {%s}%f"), i, *valueColor, DebugData.playerIntensities[i]));
 	}
 }
 
