@@ -20,6 +20,7 @@ protected:
 	struct FDebugData
 	{
 		FName currentFSMState;
+		int numEnemies;
 		TArray<float> playerIntensities;
 
 		void Serialize(FArchive& archive);

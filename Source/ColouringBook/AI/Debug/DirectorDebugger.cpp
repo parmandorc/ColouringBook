@@ -30,6 +30,7 @@ void FDirectorDebugger::FDebugData::Serialize(FArchive& archive)
 void FDirectorDebugger::CollectData(APlayerController* OwnerPC, AActor* DebugActor)
 {
 	DebugData.currentFSMState = FName(TEXT(""));
+	DebugData.numEnemies = 0;
 	DebugData.playerIntensities.Empty();
 
 	UWorld* world = OwnerPC->GetPawn()->GetWorld();
@@ -39,6 +40,7 @@ void FDirectorDebugger::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 		if (DirectorItr)
 		{
 			DebugData.currentFSMState = (*DirectorItr)->GetCurrentFSMStateName();
+			DebugData.numEnemies = (*DirectorItr)->GetSpawnedEnemiesNum();
 		}
 
 		for (TActorIterator<AColouringBookCharacter> PlayerItr(world); PlayerItr; ++PlayerItr)
@@ -51,6 +53,7 @@ void FDirectorDebugger::CollectData(APlayerController* OwnerPC, AActor* DebugAct
 void FDirectorDebugger::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCanvasContext& CanvasContext)
 {
 	CanvasContext.Print(FString(TEXT("Current State: ")) + DebugData.currentFSMState.ToString());
+	CanvasContext.Print(FString::Printf(TEXT("Number of enemies alive: %d"), DebugData.numEnemies));
 
 	for (int i = 0; i < DebugData.playerIntensities.Num(); i++)
 	{
