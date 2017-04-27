@@ -9,8 +9,16 @@
 // Place any includes here that are needed by the majority of your .cpp files
 
 #include "Engine.h"
+#include "ModuleManager.h"
+#include "UnrealEd.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogColouringBook, Log, All);
 
+class FColouringBookModule : public IModuleInterface
+{
+public:
+	virtual void StartupModule() override;
+	virtual void ShutdownModule() override;
+};
 
 #endif
