@@ -19,7 +19,7 @@ public:
 protected:
 	struct FDebugData
 	{
-		FString currentFSMState;
+		FName currentFSMState;
 		TArray<float> playerIntensities;
 
 		void Serialize(FArchive& archive);

@@ -29,24 +29,28 @@ void FDirectorDebugger::FDebugData::Serialize(FArchive& archive)
 
 void FDirectorDebugger::CollectData(APlayerController* OwnerPC, AActor* DebugActor)
 {
-	DebugData.currentFSMState = TEXT("-");
-
-	ADirector* director = Cast<ADirector>(DebugActor);
-	if (director != nullptr)
-	{
-		// Set director state string
-	}
-
+	DebugData.currentFSMState = FName(TEXT(""));
 	DebugData.playerIntensities.Empty();
-	for (TActorIterator<AColouringBookCharacter> PlayerItr(OwnerPC->GetControlledPawn()->GetWorld()); PlayerItr; ++PlayerItr)
+
+	UWorld* world = OwnerPC->GetControlledPawn()->GetWorld();
+	if (world != nullptr)
 	{
-		DebugData.playerIntensities.Add((*PlayerItr)->GetIntensityTracker()->GetIntensity());
+		TActorIterator<ADirector> DirectorItr(world);
+		if (DirectorItr)
+		{
+			DebugData.currentFSMState = (*DirectorItr)->GetCurrentFSMStateName();
+		}
+
+		for (TActorIterator<AColouringBookCharacter> PlayerItr(world); PlayerItr; ++PlayerItr)
+		{
+			DebugData.playerIntensities.Add((*PlayerItr)->GetIntensityTracker()->GetIntensity());
+		}
 	}
 }
 
 void FDirectorDebugger::DrawData(APlayerController* OwnerPC, FGameplayDebuggerCanvasContext& CanvasContext)
 {
-	CanvasContext.Print(FString(TEXT("Current State: ")) + DebugData.currentFSMState);
+	CanvasContext.Print(FString(TEXT("Current State: ")) + DebugData.currentFSMState.ToString());
 
 	for (int i = 0; i < DebugData.playerIntensities.Num(); i++)
 	{

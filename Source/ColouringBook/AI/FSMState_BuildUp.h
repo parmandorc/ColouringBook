@@ -34,4 +34,8 @@ private:
 
 	// The time that this state has been active
 	float lifetime;
+
+public:
+	// Returns the name of the state
+	FORCEINLINE virtual FName GetStateName() const override { return FName(TEXT("Build Up")); }
 };

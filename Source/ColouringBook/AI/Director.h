@@ -83,4 +83,6 @@ public:
 	FORCEINLINE float GetPeakEnemiesPercentage() const { return PeakEnemiesPercentage; }
 	// Returns the minimum time the director stays in Relax mode
 	FORCEINLINE float GetRelaxMinTime() const { return RelaxMinTime; }
+	// Returns the name of the current FSM State
+	FORCEINLINE FName GetCurrentFSMStateName() const { return FSMStates[currentState]->GetStateName(); }
 };

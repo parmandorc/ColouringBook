@@ -23,4 +23,8 @@ public:
 private:
 	// The number of enemies that were alive in the scene when the FSM entered this state
 	int initialNumEnemies;
+
+public:
+	// Returns the name of the state
+	FORCEINLINE virtual FName GetStateName() const override { return FName(TEXT("Peak")); }
 };
