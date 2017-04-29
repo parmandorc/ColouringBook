@@ -6,6 +6,14 @@ public class ColouringBook : ModuleRules
 {
 	public ColouringBook(TargetInfo Target)
 	{
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "RHI", "RenderCore" });
-	}
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "RHI", "RenderCore"});
+
+        if (UEBuildConfiguration.bBuildDeveloperTools &&
+            Target.Configuration != UnrealTargetConfiguration.Shipping &&
+            Target.Configuration != UnrealTargetConfiguration.Test)
+        {
+            PrivateDependencyModuleNames.Add("GameplayDebugger");
+            Definitions.Add("WITH_GAMEPLAY_DEBUGGER=1");
+        }
+    }
 }

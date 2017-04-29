@@ -29,4 +29,8 @@ private:
 
 	// Called when the minimum timer elaspes
 	void OnTimerElapse();
+
+public:
+	// Returns the name of the state
+	FORCEINLINE virtual FName GetStateName() const override { return FName(TEXT("Relax")); }
 };

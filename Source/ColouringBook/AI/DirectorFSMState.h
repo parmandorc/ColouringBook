@@ -47,4 +47,7 @@ public:
 	
 	// Returns whether the FSM should transition to a different state
 	virtual State CheckForTransitions() { return State::NONE; }
+
+	// Returns the name of the state
+	FORCEINLINE virtual FName GetStateName() const { return FName(TEXT("")); }
 };
