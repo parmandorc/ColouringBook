@@ -9,7 +9,7 @@ In a famous paper presented at the Game Developers Conference in 2003, Joe Stamm
 Below are Joe Stamm’s versions of the Navier-Stokes equations: on top is the equation for the velocity in a compact vector location, while on the bottom is the equation for density moving through the velocity field.
 
 
-![alt text](https://github.com/parmandorc/ColouringBook/blob/Fede_Physics/formula.png "Navier Stokes equations)
+![alt text](https://github.com/parmandorc/ColouringBook/blob/Fede_Physics/formula.png "Navier Stokes equations")
 
 
 The state of a fluid at a given instant is mathematically modeled as a velocity vector field, as a function that assigns a velocity vector to every point in space. The motion of particles that produces the effect of movement is obtained by converting the velocities surrounding the object into body forces.
