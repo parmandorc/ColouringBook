@@ -28,3 +28,7 @@ The ColorPixel function is a modified version of the previous PostInitializeComp
 
 https://www.youtube.com/watch?v=OX4O2b7KDXY
 
+## Credits
+Pablo Armando Rodriguez Codes for providing guidelines and help in the implementation and leading the entire software project.
+
+
