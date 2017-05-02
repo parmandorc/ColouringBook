@@ -48,7 +48,8 @@ A dedicated server is best suited for large number of players and complex world 
 
 For the initial prototype, the idea was to have multiple players playing in the same machine. The key part here was to create the desired number of players and attach them to the correct spawn point. Assigning a player to the correct spawn point was important, because otherwise it could be spawned in a random point, that potentially could collide with another player, resulting the player not spanwing at all because of the collision. It took some time to figure out why a player wasn´t sometimes spawned and how to fix it. The solution was based on overriding GameMode::ChoosePlayerStart so we could assign a player to each fixed spawn point.
 
-Below the commits, from most recent to oldest. Branch master
+Below the commits, from most recent to oldest.
+Branch: https://github.com/parmandorc/ColouringBook/tree/master
 
 | commit |  summary  | 
 |-------- |----------|
@@ -62,6 +63,7 @@ Below the commits, from most recent to oldest. Branch master
 | 1e47398 | Multiple player creation |
 | edce983 | Add to the map more PlayerStart with the purpose to spawn more than one players |
 | f2f004d | Do not split screen in local multiplayer |
+
 
 ### Online Multiplayer
 
@@ -134,7 +136,8 @@ In order to debug and identify the server and the clients, a very basic network 
 
 Finally, one of the most challenging issue was how to replicate the ink of each player that was on the canvas to all the clients. Taking into account that we couldn´t replicate the entire texture for performance reasons, we ended up using RPCs for this purpose. Basically, the server multicasts the color, position and radius of the circle to be drawn, so each client can paint the canvas at the correct spot. Although this solution works, performance wise was a bit slow because we were doing a multicast for each drop that was colliding with the canvas. Several solutions were discussed with the team. The first one was about controlling the multicast frequency in order to mitigate bandwith penalty due to multicast more than one ink drop collision in a short period of time. The second one was about multicasting an event to spawn the ink drops with the correct colour and let the client  do all the collisions between the drop and the canvas, so each client could end up with an slightly different painted canvas, but with a number of multicast reduced considerably. We decided to go ahead with the latter one but there was no success, because the clients couldn´t see the ink on the canvas, only the server. This could be because some of the canvas drawing algorithm variables will probably need to be replicated, but further investigation is needed to detect the problem. 
 
-Below the commits, from most recent to oldest. Branch online-multipayer
+Below the commits, from most recent to oldest.
+Branch: https://github.com/parmandorc/ColouringBook/tree/online-multiplayer
 
 | commit |  summary  | 
 |---------- |------------|
@@ -170,7 +173,8 @@ Below the commits, from most recent to oldest. Branch online-multipayer
 | 1f72754 | Only AutoPossessPlayer and AutoReceiveInput in local multiplayer |
 | 17498c1 | Separate local multiplayer and online multiplayer |
 
-Below the commits, from most recent to oldest. Branch online-multiplayer-SpawnInkDrops
+Below the commits, from most recent to oldest.
+Branch: https://github.com/parmandorc/ColouringBook/tree/online-multiplayer-MulticastSpawnInkDrops
 
 | commit |  summary  | 
 |---------- |------------|
