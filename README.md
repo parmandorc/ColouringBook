@@ -53,16 +53,16 @@ Branch: https://github.com/parmandorc/ColouringBook/tree/master
 
 | commit |  summary  | 
 |-------- |----------|
-| f706af9 | We really need to include Engine.h if we want to get access to PlayerStart |
-| 1103ecf | PR´s feedback: Set num players to 2 instead of 4, include EngineMinimal.h | 
-| 6bb3041 | Autoposses player and AutoreceiveInput according to PlayerController |
-| 36a482f | Ignore enc_temp_folder |
-| f3133cd | Make sure that each player controller spawns the pawn in the correct PlayerStart |
-| af44926 | Use parent class GetNumPlayers for checking the numbers of players created |
-| 6ead557 | Print properly number of created players debug message |
-| 1e47398 | Multiple player creation |
-| edce983 | Add to the map more PlayerStart with the purpose to spawn more than one players |
-| f2f004d | Do not split screen in local multiplayer |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/f706af9dabb64a56cee448ccd929b0d4ac52bc95">f706af9</a> | We really need to include Engine.h if we want to get access to PlayerStart |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/1103ecf95763a029697d72fedbaa012fe12dd9f7">1103ecf</a> | PR´s feedback: Set num players to 2 instead of 4, include EngineMinimal.h | 
+| <a href="https://github.com/parmandorc/ColouringBook/commit/6bb3041bd7da52b7ed2ce9a1ba7f96c36a076906">6bb3041</a> | Autoposses player and AutoreceiveInput according to PlayerController |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/36a482f56c9348cf838064116f863a27071448bb">36a482f</a> | Ignore enc_temp_folder |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/f3133cdd72bae8d1bb2d4af96dcba3b7872d665e">f3133cd</a> | Make sure that each player controller spawns the pawn in the correct PlayerStart |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/af449264d726f926ed660ccf515eee1d71da137d">af44926</a> | Use parent class GetNumPlayers for checking the numbers of players created |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/6ead55714af4c7e8af9894566601ecea96e4dbb6">6ead557</a> | Print properly number of created players debug message |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/1e47e984ce3675301d4d8349bce77c3f14d0388f">1e47398</a> | Multiple player creation |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/edce9831866e70a2f0dc4ae8959c125930747b4b">edce983</a> | Add to the map more PlayerStart with the purpose to spawn more than one players |
+|<a href="https://github.com/parmandorc/ColouringBook/commit/f2f004d007eb403a50790fb34a5a96c17ecef5c2">f2f004d</a> | Do not split screen in local multiplayer |
 
 
 ### Online Multiplayer
@@ -141,44 +141,45 @@ Branch: https://github.com/parmandorc/ColouringBook/tree/online-multiplayer
 
 | commit |  summary  | 
 |---------- |------------|
-| 33cf2d4 | Change DiffuseInk and ColorPixel to use gamestate instead of gamemode. Get the color by player index too |
-| 321966a | Multicast that an enemy fired, so each client can play a fire sound | 
-| 890eb10 | Remove not needed code from the projectile |
-| dc8cb76 | More fixes after AI merge: make the color of each player/ink to be back |
-| f13f402 | More fixes after AI merge |
-| bea4e50 | Only let the server to proccess hits. Avoid null pointer crash too |
-| bc2e92a | Merge with conflicts resolved |
-| b7c8338 | Only allow the server to spawn puppets |
-| 19dd697 | Make the clients to paint the canvas by multicasting the position, radius and color |
-| d8d7e87 | Let´s make the canvas work again at least in the server |
-| e068c94 | Allow only the server to process hits on the canvas |
-| e1b5ff09 | Replicate the ownerID so we notify the client when the owner of a projectile and inkDrop changes |
-| 677458f | Let the server know WHO fires in order ti apply the correct ink color to the drop | 
-| 69dfa14 | Replicate server state so each client is able to update the HUD accordingly |
-| 4a30376 | Make sure wer reset the static state when nding the game from the editor|
-| 2d6fa64 | Display more info like connected players, etc. in the NetworkLobbyHUD |
-| 3ad32a0 | Remove Role checks because the GameMode always acts like Role_Authority |
-| 070d72e | Add basic Network lobby HUD and set it whenever we change the state |
-| d97cf83 | Network lobby: Add empty lobby map and different states to wait for travelling, etc. |
-| a463904 |  Avoid null pointer crash when spawning puppets |
-| 605e7c1 | Make sure that all the clients are actually using the server camera  |
-| a77c07d | Get rid of not needed functions that were intended for player spawning in local multiplayer |
-| 4ce7e41 | Fix the issue when the client was disconnected from the server when validing a fire shot  | 
-| ece7ffd | Make sure that the inkDrop and the Canvas replicates |
-| dba8fe8 | Spawn new players to the correct PlayerStart after login|
-| c80d3cb| Merge with conflicts resolved |
-| 3fc81c6 | Make the server to spawn projectiles |
-| 9fac346 | Skeleton added for online multiplayer firing action with basic RPC |
-| 9966e93 | Separate FireShot into Local and Online according to multiplayer mode |
-| 1f72754 | Only AutoPossessPlayer and AutoReceiveInput in local multiplayer |
-| 17498c1 | Separate local multiplayer and online multiplayer |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/33cf2d4dc513260f005fd107809960de026ecdbc">33cf2d4</a> | Change DiffuseInk and ColorPixel to use gamestate instead of gamemode. Get the color by player index too |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/321966a2b66cf2562e6fe9ca5f001105833123eb">321966a</a> | Multicast that an enemy fired, so each client can play a fire sound | 
+| <a href="https://github.com/parmandorc/ColouringBook/commit/890eb10d7e51db7d10689e7f5a8445387620cc58">890eb10</a> | Remove not needed code from the projectile |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/dc8cb762c1ec6f2c93768ffa4f8a902cddd62066">dc8cb76</a> | More fixes after AI merge: make the color of each player/ink to be back |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/f13f402264324df5e1060566b891cd69afd3aad5">f13f402</a> | More fixes after AI merge |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/bea4e50df2e5ad0227e67965a9eca097d35f4a25">bea4e50</a> | Only let the server to proccess hits. Avoid null pointer crash too |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/bc2e92aaafcc18964d2fc04c68b4f53ea4309ae8">bc2e92a</a> | Merge with conflicts resolved |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/b7c83385c3d4cc43857f41ab88dd9cb26676f85b">b7c8338</a> | Only allow the server to spawn puppets |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/19dd69705aafcb871913a36888c0d31a62ac87e4">19dd697</a> | Make the clients to paint the canvas by multicasting the position, radius and color |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/d8d7e8786bf54899de447d25a8f1e7b7669cdb96">d8d7e87</a> | Let´s make the canvas work again at least in the server |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/e068c94ace16e6066f1354f082881186d830303e">e068c94</a> | Allow only the server to process hits on the canvas |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/e1b5f09272cbe0b5ed02949d34993d3b4b37eb8a">e1b5ff09</a> | Replicate the ownerID so we notify the client when the owner of a projectile and inkDrop changes |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/677458fe24009231def2fe82eff382306e068b52">677458f</a> | Let the server know WHO fires in order ti apply the correct ink color to the drop | 
+| <a href="https://github.com/parmandorc/ColouringBook/commit/69dfa1466712c6f7368baeb9c5cc9e601e7432a2">69dfa14</a> | Replicate server state so each client is able to update the HUD accordingly |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/4a30376b7009c1c90f3f47d6174d6aa16440fd7c">4a30376</a> | Make sure wer reset the static state when nding the game from the editor|
+| <a href="https://github.com/parmandorc/ColouringBook/commit/2d6fa64a95dfff2c534b593986f2436f207d8a03">2d6fa64</a> | Display more info like connected players, etc. in the NetworkLobbyHUD |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/3ad32a039adc5bf4bc44a49761d6f581927d212b">3ad32a0</a> | Remove Role checks because the GameMode always acts like Role_Authority |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/070d72ebceb3f7a78d2f93c66f49bb751b6290d3">070d72e</a> | Add basic Network lobby HUD and set it whenever we change the state |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/d97cf839fac70c84dbd1ead4a0628963e53cc5b7">d97cf83</a> | Network lobby: Add empty lobby map and different states to wait for travelling, etc. |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/a46390430c4b15402c9e3ebdcec9fded67e5bd8a">a463904</a> |  Avoid null pointer crash when spawning puppets |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/605e7c19bcf8f3fb45b93b6130638f975ce92fff">605e7c1</a> | Make sure that all the clients are actually using the server camera  |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/a77c07d9f05cb7a895e686370b96570bedde465d">a77c07d</a> | Get rid of not needed functions that were intended for player spawning in local multiplayer |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/4ce7e416b585023f56f92194316cd1d3c8dd2678">4ce7e41</a> | Fix the issue when the client was disconnected from the server when validing a fire shot  | 
+| <a href="https://github.com/parmandorc/ColouringBook/commit/ece7ffdc747e9f36cd1705234a6e580c702d42a7">ece7ffd</a> | Make sure that the inkDrop and the Canvas replicates |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/dba8fe837937f7b74d1111e5d954b7863cc51669">dba8fe8</a> | Spawn new players to the correct PlayerStart after login|
+| <a href="https://github.com/parmandorc/ColouringBook/commit/c80d3cb1de3fd1aa997cc27194080949a002774e">c80d3cb</a> | Merge with conflicts resolved |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/3fc81c60231ef3762aa7659d9dc96662bd622b8b">3fc81c6</a> | Make the server to spawn projectiles |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/9fac34603a8d477f749a53bba8a806a2b918dc85">9fac346</a> | Skeleton added for online multiplayer firing action with basic RPC |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/9966e934c9704c217b30e27e72faa70169ab2fd7">9966e93</a> | Separate FireShot into Local and Online according to multiplayer mode |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/1f7275462917bab24a939968c271001cd9d04513">1f72754</a> | Only AutoPossessPlayer and AutoReceiveInput in local multiplayer |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/17498c11ac8560aed52ce6990ce880b78541296a">17498c1</a> | Separate local multiplayer and online multiplayer |
 
 Below the commits, from most recent to oldest.
 Branch: https://github.com/parmandorc/ColouringBook/tree/online-multiplayer-MulticastSpawnInkDrops
 
 | commit |  summary  | 
 |---------- |------------|
-| c086377 | Attempt to multicast spawn ink drops event in order to optimise canvas drawing |
+| <a href="https://github.com/parmandorc/ColouringBook/commit/c08637701445d9efd62f2afb86b99ddc8ae83c61">c086377</a> | Attempt to multicast spawn ink drops event in order to optimise canvas drawing |
+
 
 ## Team
 
